@@ -11,6 +11,13 @@ import (
 var mgoHost *string = flag.String("host","localhost","MongoDB host string.")
 var mgoDb *string = flag.String("db","test","MongoDB database to connect to.")
 
+func getRequiredCollections() map[string]bool {
+    return map[string]bool {
+        "contentTypes": true,
+        "admins": true,
+    }
+}
+
 func getSession(host string) *mgo.Session {
     //Attempt to dial host
     s, err := mgo.Dial(host)
@@ -44,10 +51,7 @@ func main() {
         panic(err)
     }
 
-    req := map[string]bool{
-        "contentTypes": true,
-        "admins": true,
-    }
+    req := getRequiredCollections()
 
     for _, el := range collectionNames {
         if val, ok := req[el]; val && ok {
