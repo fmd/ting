@@ -72,5 +72,10 @@ func startProject(name string) error {
         return err
     }
 
+    r, err := ting.NewRepo()
+    if err != nil {
+        return err
+    }
+
     return nil
 }

@@ -6,8 +6,9 @@ import (
     "labix.org/v2/mgo"
 )
 
-//Repo is the MongoDB structure for a site.
+//Repo is the structure for a site.
 //All Repo data is stored within a MongoDB database.
+//All Repo settings are stored within a settings file.
 type Repo struct {
     Session *mgo.Session
     Db *mgo.Database
@@ -66,13 +67,12 @@ func NewMgoSession(hostname string) (*mgo.Session, error) {
     return s, nil
 }
 
-//LoadRepo initialises a Repo instance based on the current directory.
-//It attempts to load a settings file into a Settings instance,
-//and attempts to connect to the mongoDB instance specified by the settings.
-//It returns a *Repo and a nil error on success, or nil and an error on fail.
-func LoadRepo() (*Repo, error) {
+//RepoFromCwd creates a *Repo instance and sets up a Mongo session and settings file.
+//It uses the current working directory to find the settings file.
+//It does not connect to the database.
+//It returns the *Repo and a nil error on success, or nil and an error on failure.
+func RepoFromCwd() (*Repo, error) {
     var err error
-
     r := &Repo{}
     r.Settings, err = LoadSettings()
     if err != nil {
@@ -84,6 +84,31 @@ func LoadRepo() (*Repo, error) {
         return nil, err
     }
 
+    return r, nil
+}
+
+//NewRepo sets up a Repo in Mongo from an existing settings file and migrations directory.
+//LoadRepo will not work unless the Repo has been set up with NewRepo.
+//It returns the *Repo and a nil error on success, or nil and an error on failure.
+func NewRepo() (*Repo, error) {
+    r, err := RepoFromCwd()
+    if err != nil {
+        return nil, err
+    }
+    defer r.Session.Close()
+
+    return r, nil
+}
+
+//LoadRepo initialises a Repo instance based on the current directory.
+//It attempts to load a settings file into a Settings instance,
+//and attempts to connect to the mongoDB instance specified by the settings.
+//It returns a *Repo and a nil error on success, or nil and an error on fail.
+func LoadRepo() (*Repo, error) {
+    r, err := RepoFromCwd()
+    if err != nil {
+        return nil, err
+    }
     defer r.Session.Close()
     r.Db = r.Session.DB(r.Settings.MongoDb)
 
@@ -94,11 +119,17 @@ func LoadRepo() (*Repo, error) {
     return r, nil
 }
 
+//AddContentType adds a content type to this Repo.
+//It adds the migration file and also adds the type to Mongo.
+//It returns an error if it was not successful.
 func (r *Repo) AddContentType(name string) error {
     fmt.Println(fmt.Sprintf("Added content type named '%s'.", name))
     return nil
 }
 
+//DeleteContentType deletes a content type to this Repo.
+//It adds the migration file and also deletes the type from Mongo.
+//It returns an error if it was not successful.
 func (r *Repo) DeleteContentType(name string) error {
     fmt.Println(fmt.Sprintf("Removed content type named '%s'.", name))
     return nil
