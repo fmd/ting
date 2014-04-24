@@ -87,7 +87,7 @@ func RepoFromCwd() (*Repo, error) {
     return r, nil
 }
 
-//NewRepo sets up a Repo in Mongo from an existing settings file and migrations directory.
+//NewRepo sets up a Repo in Mongo from an existing settings file.
 //LoadRepo will not work unless the Repo has been set up with NewRepo.
 //It returns the *Repo and a nil error on success, or nil and an error on failure.
 func NewRepo() (*Repo, error) {
@@ -96,6 +96,8 @@ func NewRepo() (*Repo, error) {
         return nil, err
     }
     defer r.Session.Close()
+    r.Db = r.Session.DB(r.Settings.MongoDb)
+    
 
     return r, nil
 }
