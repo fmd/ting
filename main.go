@@ -1,9 +1,7 @@
 package main
 
 import (
-	"errors"
 	"flag"
-	"fmt"
 	"github.com/go-martini/martini"
 	"labix.org/v2/mgo"
 )
@@ -11,15 +9,9 @@ import (
 var mgoHost *string = flag.String("host", "localhost", "MongoDB host string.")
 var mgoDb *string = flag.String("db", "test", "MongoDB database to connect to.")
 
-func getRequiredCollections() map[string]bool {
-	return map[string]bool{
-		"contentTypes": true,
-		"admins":       true,
-	}
-}
-
 func getSession(host string) *mgo.Session {
-	//Attempt to dial host
+
+    //Attempt to dial host
 	s, err := mgo.Dial(host)
 
 	//If we can't connect, panic
@@ -42,34 +34,11 @@ func main() {
 	defer session.Close()
 
 	//Connect to the database
-	d := session.DB(*mgoDb)
+	db := session.DB(*mgoDb)
 
-	//Attempt to get collection names. If we can't, we connected to a bad DB
-	collectionNames, err := d.CollectionNames()
-
-	if err != nil {
-		panic(err)
-	}
-
-	req := getRequiredCollections()
-
-	//Make sure that have all required collections
-	for _, el := range collectionNames {
-		if val, ok := req[el]; val && ok {
-			req[el] = false
-		}
-	}
-
-	//If we don't have one of the required collections, panic
-	for idx, notFound := range req {
-		if notFound {
-			errStr := fmt.Sprintf("Database '%s' does not have required collection '%s'.", d.Name, idx)
-			err = errors.New(errStr)
-			break
-		}
-	}
-
-	if err != nil {
+	r := &Repo{db}
+	
+	if err := r.CollectionError(); err != nil {
 		panic(err)
 	}
 
