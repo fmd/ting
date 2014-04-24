@@ -1,4 +1,4 @@
-package repo
+package ting 
 
 import (
     "labix.org/v2/mgo"

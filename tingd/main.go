@@ -1,4 +1,4 @@
-package main
+package tingd 
 
 import (
 	"flag"
@@ -38,8 +38,8 @@ func main() {
 	db := session.DB(*mgoDb)
 
 	r := &ting.Repo{db}
-	
-	if err := r.CollectionError(); err != nil {
+
+    if err := r.CollectionError(); err != nil {
 		panic(err)
 	}
 
