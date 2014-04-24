@@ -3,7 +3,6 @@ package ting
 import (
     "time"
     "errors"
-    "strconv"
 )
 
 //A Migration represents a file in the migrations folder.
@@ -26,6 +25,5 @@ func (m *Migration) Save() error {
     }
 
     m.Timestamp = time.Now().UTC().Unix()
-
     return nil
 }
