@@ -1,10 +1,9 @@
 package ting
 
 import (
-    "encoding/json"
-    "io/ioutil"
     "reflect"
-    "fmt"
+    "io/ioutil"
+    "encoding/json"
 )
 
 //Settings files are called "settings.json".
@@ -82,7 +81,7 @@ func (s *Settings) Save() error {
     return nil
 }
 
-//FieldNameByJsonTag get a fieldname (obtained via reflection) matching a given tag.
+//FieldNameByJsonTag gets a fieldname (obtained via reflection) matching a given tag.
 //The tag is passed in as a string.
 //It returns an empty string if the tag could not be found, or the name of the field if it could.
 func (s *Settings) FieldNameByJsonTag(tag string) string {
@@ -90,15 +89,17 @@ func (s *Settings) FieldNameByJsonTag(tag string) string {
         return ""
     }
 
+    fieldname := ""
+
     el := reflect.TypeOf(s).Elem()
     numFields := el.NumField()
     for i := 0; i < numFields; i++ {
         field := el.Field(i)
-        fmt.Println(field.Tag)
         if field.Tag.Get("json") == tag {
-            return field.Name
+            fieldname = field.Name
+            break
         }
     }
 
-    return ""
+    return fieldname
 }
