@@ -3,9 +3,7 @@ package main
 import (
     "os"
     "fmt"
-    "io/ioutil"
     "errors"
-    "encoding/json"
     "github.com/fmd/goting/ting"
     "github.com/docopt/docopt-go"
 )
@@ -15,10 +13,15 @@ func usage() string {
 
 Usage:
     tingctl startproject <name>
+
     tingctl addtype <name>
     tingctl deltype <name>
     tingctl modtype <type> addprim <prim>
     tingctl modtype <type> delprim <prim>
+    
+    tingctl settings get <key>
+    tingctl settings set <key> <value>
+
     tingctl -h | --help
     tingctl --version
 
@@ -27,7 +30,9 @@ Options:
     --version   Show version.`
 }
 
-func startProject(name string) error {
+func mkProjectDir(name string) error {
+
+    //Ensure nothing with this name already exists here
     if _, err := os.Stat(name); err != nil {
         if !os.IsNotExist(err) {
             return err
@@ -36,11 +41,15 @@ func startProject(name string) error {
         return errors.New(fmt.Sprintf("File named '%s' already exists in this directory.", name))
     }
 
+    //Create the directory
     if err := os.Mkdir(name, 0755); err != nil {
         return err
     }
 
-    //Change directory to newly created project directory
+    return nil
+}
+
+func chProjectDir(name string) error {
     d, err := os.Open(name)
 
     if err != nil {
@@ -55,8 +64,29 @@ func startProject(name string) error {
         return err
     }
 
+    return nil
+}
+
+func startProject(name string) error {
+    var err error
+
+    //Make the project directory
+    if err = mkProjectDir(name); err != nil {
+        return err
+    }
+
+    //Change directory to newly created project directory
+    if err = chProjectDir(name); err != nil {
+        return err
+    }
+
+    //Create the migrations directory
+    if err = mkProjectDir("migrations"); err != nil {
+        return err
+    }
+
     //Create settings struct instance and save to file
-    s := ting.NewSettings()
+    s := ting.NewSettings("settings.json")
     err = s.Save()
 
     if err != nil {
@@ -86,5 +116,9 @@ func main() {
 
     if args["modtype"].(bool) {
 
+    }
+
+    if args["settings"].(bool) {
+        
     }
 }

@@ -1,6 +1,7 @@
 package ting
 
 import (
+    "encoding/json"
     "io/ioutil"
 )
 
@@ -38,14 +39,14 @@ func NewSettings() *Settings {
     return s
 }
 
-func (s *Settings) Save() err {
+func (s *Settings) Save(filename string) error {
     j, err := json.MarshalIndent(s, "", "    ")
 
     if err != nil {
         return err
     }
     
-    err = ioutil.WriteFile("settings.json", j, 0755)
+    err = ioutil.WriteFile(filename, j, 0755)
 
     if err != nil {
         return err
