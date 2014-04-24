@@ -1,15 +1,17 @@
 package ting 
 
 import (
-    "labix.org/v2/mgo"
     "fmt"
     "errors"
+    "labix.org/v2/mgo"
 )
 
 //Repo is the MongoDB structure for a site.
 //All Repo data is stored within a MongoDB database.
 type Repo struct {
+    Session *mgo.Session
     Db *mgo.Database
+    Settings *Settings
 }
 
 //RequiredCollections gets a map of required collections for a Repo.
@@ -18,6 +20,7 @@ type Repo struct {
 func RequiredCollections() map[string]bool {
     return map[string]bool{
         "contentTypes": true,
+        "migrations":   true,
         "admins":       true,
     }
 }
@@ -47,5 +50,56 @@ func (r *Repo) CollectionError() error {
         }
     }
 
+    return nil
+}
+
+//NewMgoSession creates a new Mgo session.
+//BUG(Needs to include other credentials from the Repo session)
+//It returns the session and a nil error if successful, or nil and an error if unsuccessful.
+func NewMgoSession(hostname string) (*mgo.Session, error) {
+    s, err := mgo.Dial(hostname)
+    if err != nil {
+        return nil, err
+    }
+
+    s.SetMode(mgo.Monotonic, true)
+    return s, nil
+}
+
+//LoadRepo initialises a Repo instance based on the current directory.
+//It attempts to load a settings file into a Settings instance,
+//and attempts to connect to the mongoDB instance specified by the settings.
+//It returns a *Repo and a nil error on success, or nil and an error on fail.
+func LoadRepo() (*Repo, error) {
+    var err error
+
+    r := &Repo{}
+    r.Settings, err = LoadSettings()
+    if err != nil {
+        return nil, err
+    }
+
+    r.Session, err = NewMgoSession(r.Settings.MongoHost)
+    if err != nil {
+        return nil, err
+    }
+
+    defer r.Session.Close()
+    r.Db = r.Session.DB(r.Settings.MongoDb)
+
+    if err = r.CollectionError(); err != nil {
+        return nil, err
+    }
+
+    return r, nil
+}
+
+func (r *Repo) AddContentType(name string) error {
+    fmt.Println(fmt.Sprintf("Added content type named '%s'.", name))
+    return nil
+}
+
+func (r *Repo) DeleteContentType(name string) error {
+    fmt.Println(fmt.Sprintf("Removed content type named '%s'.", name))
     return nil
 }
