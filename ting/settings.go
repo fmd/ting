@@ -102,8 +102,3 @@ func (s *Settings) FieldNameByJsonTag(tag string) string {
 
     return ""
 }
-
-//SetByFieldName sets a field in a Settings instance using the field name as a string.
-func (s *Settings) SetByFieldName(fieldname string, value string) {
-    reflect.ValueOf(s).Elem().FieldByName(fieldname).SetString(value)
-}

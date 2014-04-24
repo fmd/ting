@@ -4,6 +4,7 @@ import (
     "os"
     "fmt"
     "errors"
+    "reflect"
     "github.com/fmd/goting/ting"
     "github.com/docopt/docopt-go"
 )
@@ -105,7 +106,8 @@ func settingsSet(key string, value string) error {
         return errors.New(fmt.Sprintf("Could not find field in settings with key '%s'", key))
     }
 
-    s.SetByFieldName(fieldname, value)
+    reflect.ValueOf(s).Elem().FieldByName(fieldname).SetString(value)
+
     if err = s.Save(); err != nil {
         panic(err)
     }
@@ -114,7 +116,6 @@ func settingsSet(key string, value string) error {
 }
 
 func settingsGet(key string) (string, error) {
-
     return "", nil
 }
 
