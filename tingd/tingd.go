@@ -7,7 +7,7 @@ import (
 	"labix.org/v2/mgo"
 )
 
-var mgoHost *string = flag.String("host", "localhost", "MongoDB host string.")
+var mgoHost *string = flag.String("host", "localhost", "MongoDB hostname string.")
 var mgoDb *string = flag.String("db", "test", "MongoDB database to connect to.")
 
 func getSession(host string) *mgo.Session {
@@ -26,19 +26,13 @@ func getSession(host string) *mgo.Session {
 }
 
 func main() {
-
-	//Parse flags
 	flag.Parse()
-
-	//Create mongo session
 	session := getSession(*mgoHost)
 	defer session.Close()
-
-	//Connect to the database
 	db := session.DB(*mgoDb)
-
 	r := &ting.Repo{db}
 
+	//Check repo for collection errors
     if err := r.CollectionError(); err != nil {
 		panic(err)
 	}

@@ -6,6 +6,8 @@ import (
     "errors"
 )
 
+//Repo is the MongoDB structure for a site.
+//All Repo data is stored within a MongoDB database.
 type Repo struct {
     Db *mgo.Database
 }
