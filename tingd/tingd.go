@@ -1,4 +1,4 @@
-package tingd 
+package main
 
 import (
 	"flag"
