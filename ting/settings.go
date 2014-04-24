@@ -3,10 +3,16 @@ package ting
 import (
     "encoding/json"
     "io/ioutil"
+    "reflect"
+    "fmt"
 )
 
-//This is the struct that contains the schema for a settings file.
-//Settings files should *always be ignored by your VCS!
+//Settings files are called "settings.json".
+var settingsFilename string = "settings.json"
+
+//Settings the struct that contains the schema for a settings file.
+//Settings files should *always* be ignored by your VCS!
+//All Settings fields should be stored as strings.
 type Settings struct {
 
     //Mongo Credentials
@@ -20,7 +26,7 @@ type Settings struct {
     ProjectVersion  string `json:"project_version"`
 }
 
-//This function creates a new instance of Settings.
+//NewSettings creates a new instance of Settings.
 //It fills out the instance with useful defaults.
 //It returns the created instance.
 func NewSettings() *Settings {
@@ -39,18 +45,65 @@ func NewSettings() *Settings {
     return s
 }
 
-func (s *Settings) Save(filename string) error {
+//LoadSettings loads settings from a file.
+//It returns a pointer to a Settings instance if successful (nil otherwise),
+//As well as an error if it fails (nil otherwise).
+func LoadSettings() (*Settings, error) {
+    data, err := ioutil.ReadFile(settingsFilename)
+    if err != nil {
+        return nil, err
+    }
+
+    s := &Settings{}
+    err = json.Unmarshal(data, s)
+    if err != nil {
+        return nil, err
+    }
+
+    return s, nil
+}
+
+//Save is called on a Settings instance to save the settings in json format.
+//The data is saved to a file in the current directory by the name of the filename string.
+//It returns an error if it fails, or a nil error otherwise.
+func (s *Settings) Save() error {
     j, err := json.MarshalIndent(s, "", "    ")
 
     if err != nil {
         return err
     }
     
-    err = ioutil.WriteFile(filename, j, 0755)
+    err = ioutil.WriteFile(settingsFilename, j, 0755)
 
     if err != nil {
         return err
     }
 
     return nil
+}
+
+//FieldNameByJsonTag get a fieldname (obtained via reflection) matching a given tag.
+//The tag is passed in as a string.
+//It returns an empty string if the tag could not be found, or the name of the field if it could.
+func (s *Settings) FieldNameByJsonTag(tag string) string {
+    if len(tag) == 0 {
+        return ""
+    }
+
+    el := reflect.TypeOf(s).Elem()
+    numFields := el.NumField()
+    for i := 0; i < numFields; i++ {
+        field := el.Field(i)
+        fmt.Println(field.Tag)
+        if field.Tag.Get("json") == tag {
+            return field.Name
+        }
+    }
+
+    return ""
+}
+
+//SetByFieldName sets a field in a Settings instance using the field name as a string.
+func (s *Settings) SetByFieldName(fieldname string, value string) {
+    reflect.ValueOf(s).Elem().FieldByName(fieldname).SetString(value)
 }
