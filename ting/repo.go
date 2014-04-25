@@ -13,17 +13,28 @@ type Repo struct {
     Session *mgo.Session
     Db *mgo.Database
     Settings *Settings
+    Collections map[string]*mgo.Collection
 }
 
-//RequiredCollections gets a map of required collections for a Repo.
-//Any further required collections for Repos should be added here in the format "collection": true
-//It returns a map[string]bool of all collections required for a Repo to be considered valid.
-func RequiredCollections() map[string]bool {
-    return map[string]bool{
-        "contentTypes": true,
-        "migrations":   true,
-        "admins":       true,
+//RequiredCollections gets a slice of the names of all required collections for a valid repo.
+//Any further required collections for Repos should be added here.
+//It returns a slice of strings representing the collection names.
+func RequiredCollections() []string {
+    return []string{
+        "contentTypes",
+        "migrations",
     }
+}
+
+//RequiredCollectionsMap gets a map of required collections for a Repo.
+//It returns a map[string]bool of all collections required for a Repo to be considered valid.
+func RequiredCollectionsMap() map[string]bool {
+    m := make(map[string]bool)
+    for _, el := range RequiredCollections() {
+        m[el] = true
+    }
+
+    return m
 }
 
 //CollectionError checks to see whether a Repo possesses all required collections.
@@ -36,7 +47,7 @@ func (r *Repo) CollectionError() error {
         return err
     }
 
-    req := RequiredCollections()
+    req := RequiredCollectionsMap()
 
     for _, el := range names {
         if val, ok := req[el]; val && ok {
@@ -84,6 +95,8 @@ func RepoFromCwd() (*Repo, error) {
         return nil, err
     }
 
+    r.Collections = make(map[string]*mgo.Collection)
+
     return r, nil
 }
 
@@ -97,7 +110,16 @@ func NewRepo() (*Repo, error) {
     }
     defer r.Session.Close()
     r.Db = r.Session.DB(r.Settings.MongoDb)
-    
+
+    for _, el := range RequiredCollections() {
+        c := r.Db.C(el)
+        err = c.Create(&mgo.CollectionInfo{})
+        if err != nil {
+            return nil, err
+        }
+
+        r.Collections[el] = c
+    }
 
     return r, nil
 }
