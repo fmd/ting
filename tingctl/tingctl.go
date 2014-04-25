@@ -32,7 +32,6 @@ func main() {
         if err := startProject(args["<name>"].(string)); err != nil {
             panic(err)
         }
-
         return
     }
 
@@ -48,7 +47,6 @@ func main() {
                 fmt.Println(s)
             }
         }
-
         return
     }
 

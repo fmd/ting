@@ -72,12 +72,10 @@ func startProject(name string) error {
         return err
     }
 
-    r, err := ting.NewRepo()
+    _, err = ting.NewRepo()
     if err != nil {
         return err
     }
-
-    fmt.Println(r.Collections)
 
     return nil
 }

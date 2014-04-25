@@ -13,7 +13,6 @@ type Repo struct {
     Session *mgo.Session
     Db *mgo.Database
     Settings *Settings
-    Collections map[string]*mgo.Collection
 }
 
 //RequiredCollections gets a slice of the names of all required collections for a valid repo.
@@ -21,8 +20,8 @@ type Repo struct {
 //It returns a slice of strings representing the collection names.
 func RequiredCollections() []string {
     return []string{
+        "migrations", //Migrations should always be first!
         "contentTypes",
-        "migrations",
     }
 }
 
@@ -57,7 +56,7 @@ func (r *Repo) CollectionError() error {
 
     for idx, notFound := range req {
         if notFound {
-            errStr := fmt.Sprintf("Database '%s' does not have required collection '%s'.", r.Db.Name, idx)
+            errStr := fmt.Sprintf("Error: database '%s' does not have required collection '%s'.", r.Db.Name, idx)
             return errors.New(errStr)
         }
     }
@@ -95,8 +94,6 @@ func RepoFromCwd() (*Repo, error) {
         return nil, err
     }
 
-    r.Collections = make(map[string]*mgo.Collection)
-
     return r, nil
 }
 
@@ -112,13 +109,10 @@ func NewRepo() (*Repo, error) {
     r.Db = r.Session.DB(r.Settings.MongoDb)
 
     for _, el := range RequiredCollections() {
-        c := r.Db.C(el)
-        err = c.Create(&mgo.CollectionInfo{})
+        err = r.AddContentType(el)
         if err != nil {
             return nil, err
         }
-
-        r.Collections[el] = c
     }
 
     return r, nil
@@ -143,11 +137,37 @@ func LoadRepo() (*Repo, error) {
     return r, nil
 }
 
+//ApplyMigration applies a Migration.
+//It returns an error if unsuccessful, or a nil error otherwise.
+func (r *Repo) ApplyMigration(m *Migration) error {
+    if !m.IsValid() {
+        return errors.New("Error: invalid migration.")
+    }
+
+    c := r.Db.C(m.ContentType)
+
+    switch m.Action {
+        case "init":
+            return m.ApplyInit(c)
+        case "structure":
+            return m.ApplyStructure(c)
+    }
+
+    return errors.New(fmt.Sprintf("Error: invalid action '%s'.", m.Action))
+}
+
 //AddContentType adds a content type to this Repo.
 //It adds the migration file and also adds the type to Mongo.
 //It returns an error if it was not successful.
 func (r *Repo) AddContentType(name string) error {
-    fmt.Println(fmt.Sprintf("Added content type named '%s'.", name))
+    m := &Migration{}
+    m.ContentType = name
+    m.Action = "init"
+    err := m.Save()
+    if err != nil {
+        return err
+    }
+
     return nil
 }
 
