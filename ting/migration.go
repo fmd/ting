@@ -17,12 +17,12 @@ var MigrationsDirName string = "migrations"
 //A Migration represents a file in the migrations folder.
 //Migrations are applied to a database by using the ctl.
 type Migration struct {
-    Id          string `bson:"_id"                 json:"_id"`
-    Timestamp   int64  `bson:"timestamp"           json:"timestamp"`
-    Filename    string `bson:"filename"            json:"filename"`
-    ContentType string `bson:"content_type"        json:"content_type"`
-    Action      string `bson:"action"              json:"action"`
-    Document    string `bson:"document, omitempty" json:"document, omitempty"`
+    Id          string `bson:"_id"          json:"_id"`
+    Timestamp   int64  `bson:"timestamp"    json:"timestamp"`
+    Filename    string `bson:"filename"     json:"filename"`
+    ContentType string `bson:"content_type" json:"content_type"`
+    Action      string `bson:"action"       json:"action"`
+    Document    string `bson:"document"     json:"document, omitempty"`
 }
 
 //IsValid checks whether this is a valid migration.
@@ -69,7 +69,7 @@ func (m *Migration) IsAppliedToMongo(mc *mgo.Collection) (bool, error) {
     r := &Migration{}
     err := mc.Find(bson.M{"_id": ts}).One(&r)
     if err != nil {
-        return false, err
+        return false, nil
     }
 
     if len(r.Id) > 0 {
@@ -97,26 +97,26 @@ func (m *Migration) ApplyToMongo(mc *mgo.Collection) (bool, error) {
     return true, nil
 }
 
-func (m *Migration) ApplyInit(mc *mgo.Collection, c *mgo.Collection) error {
+func (m *Migration) ApplyInit(mc *mgo.Collection, c *mgo.Collection) (bool, error) {
     err := c.Create(&mgo.CollectionInfo{})
     if err != nil {
-        return err
+        return false, err
     }
 
     applied, err := m.ApplyToMongo(mc)
     if err != nil {
-        return err
+        return false, err
     }
 
-    return nil
+    return applied, nil
 }
 
-func (m *Migration) ApplyDocument(mc *mgo.Collection, c *mgo.Collection) error {
-    return nil
+func (m *Migration) ApplyDocument(mc *mgo.Collection, c *mgo.Collection) (bool, error) {
+    return false, nil
 }
 
-func (m *Migration) ApplyStructure(mc *mgo.Collection, c *mgo.Collection) error {
-    return nil
+func (m *Migration) ApplyStructure(mc *mgo.Collection, c *mgo.Collection) (bool, error) {
+    return false, nil
 }
 
 //Serializes the migration to JSON for saving.
@@ -129,6 +129,36 @@ func (m *Migration) Serialize() ([]byte, error) {
     }
 
     return j, nil
+}
+
+//AllMigrations loads all migrations.
+//It returns a slice of *Migrations and a nil error if successful,
+//Or nil and an error otherwise.
+func AllMigrations() ([]*Migration, error) {
+    files, err := ioutil.ReadDir(MigrationsDirName)
+    if err != nil {
+        return nil, err
+    }
+
+    m := []*Migration{}
+
+    for _, fn := range files {
+        fileData, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", MigrationsDirName, fn.Name()))
+        if err != nil {
+            return nil, err
+        }
+
+        s := &Migration{}
+
+        err = json.Unmarshal(fileData, s)
+        if err != nil {
+            return nil, err
+        }
+
+        m = append(m, s)
+    }
+
+    return m, nil
 }
 
 //MigrationIndex gets the current number of migrations in ./migrations and adds one to the figure.
@@ -160,7 +190,7 @@ func (m *Migration) Save() error {
 
     m.Timestamp = time.Now().UTC().UnixNano()
     m.Id = strconv.FormatInt(m.Timestamp, 16)
-    m.Filename = fmt.Sprintf("%s_%s_%s_%s.json", idx, ,strings.ToLower(m.ContentType),strings.ToLower(m.Action))
+    m.Filename = fmt.Sprintf("%s_%s_%s_%s.json", idx, m.Id, strings.ToLower(m.ContentType), strings.ToLower(m.Action))
 
     //Write the migration to a file.
     writePath := fmt.Sprintf("%s/%s", MigrationsDirName, m.Filename)

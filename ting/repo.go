@@ -56,7 +56,7 @@ func (r *Repo) CollectionError() error {
 
     for idx, notFound := range req {
         if notFound {
-            errStr := fmt.Sprintf("Error: database '%s' does not have required collection '%s'.", r.Db.Name, idx)
+            errStr := fmt.Sprintf("Database '%s' does not have required collection '%s'.", r.Db.Name, idx)
             return errors.New(errStr)
         }
     }
@@ -115,14 +115,42 @@ func NewRepo() (*Repo, error) {
         }
     }
 
+    err = r.MigrateAll()
+    if err != nil {
+        return nil, err
+    }
+
     return r, nil
+}
+
+func (r *Repo) MigrateAll() error {
+    migrations, err := AllMigrations()
+
+    if err != nil {
+        return err
+    }
+
+    for _, m := range migrations {
+        applied, err := r.ApplyMigration(m)
+        if err != nil {
+            return err
+        }
+
+        if applied {
+            fmt.Println(fmt.Sprintf("Applied migration '%s'.", m.Id))
+        } else {
+            fmt.Println(fmt.Sprintf("Migration '%s' was not applied.", m.Id))
+        }
+    }
+
+    return nil
 }
 
 //LoadRepo initialises a Repo instance based on the current directory.
 //It attempts to load a settings file into a Settings instance,
 //and attempts to connect to the mongoDB instance specified by the settings.
 //It returns a *Repo and a nil error on success, or nil and an error on fail.
-func LoadRepo() (*Repo, error) {
+func LoadRepo(checkCollections bool) (*Repo, error) {
     r, err := RepoFromCwd()
     if err != nil {
         return nil, err
@@ -130,8 +158,10 @@ func LoadRepo() (*Repo, error) {
     defer r.Session.Close()
     r.Db = r.Session.DB(r.Settings.MongoDb)
 
-    if err = r.CollectionError(); err != nil {
-        return nil, err
+    if checkCollections {
+        if err = r.CollectionError(); err != nil {
+            return nil, err
+        }
     }
 
     return r, nil
@@ -139,23 +169,24 @@ func LoadRepo() (*Repo, error) {
 
 //ApplyMigration applies a Migration.
 //It returns an error if unsuccessful, or a nil error otherwise.
-func (r *Repo) ApplyMigration(m *Migration) error {
+func (r *Repo) ApplyMigration(m *Migration) (bool, error) {
     if !m.IsValid() {
-        return errors.New("Error: invalid migration.")
+        return false, errors.New("Invalid migration.")
     }
 
     c := r.Db.C(m.ContentType)
+    mc := r.Db.C("migrations")
 
     switch m.Action {
         case "init":
-            return m.ApplyInit(c)
+            return m.ApplyInit(mc, c)
         case "document":
-            return m.ApplyDocument(c)
+            return m.ApplyDocument(mc, c)
         case "structure":
-            return m.ApplyStructure(c)
+            return m.ApplyStructure(mc, c)
     }
 
-    return errors.New(fmt.Sprintf("Error: invalid action '%s'.", m.Action))
+    return false, errors.New(fmt.Sprintf("Invalid action '%s'.", m.Action))
 }
 
 //AddContentType adds a content type to this Repo.

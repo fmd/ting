@@ -17,6 +17,7 @@ Usage:
     tingctl modtype <type> delprim <prim>
     tingctl settings get <key>
     tingctl settings set <key> <value>
+    tingctl migrate
     tingctl -h | --help
     tingctl --version
 
@@ -50,21 +51,32 @@ func main() {
         return
     }
 
+    migrate := args["migrate"].(bool)
+
     //The following functions all require a loaded Repo.
-    r, err := ting.LoadRepo()
+    r, err := ting.LoadRepo(!migrate)
     if err != nil {
         panic(err)
     }
 
+    if migrate {
+        if err = r.MigrateAll(); err != nil {
+            panic(err)
+        }
+        return
+    }
+
     if args["addtype"].(bool) {
         r.AddContentType(args["<name>"].(string))
+        return
     }
 
     if args["deltype"].(bool) {
         r.DeleteContentType(args["<name>"].(string))
+        return
     }
 
     if args["modtype"].(bool) {
-
+        return
     }
 }
