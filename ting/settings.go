@@ -7,7 +7,7 @@ import (
 )
 
 //Settings files are called "settings.json".
-var settingsFilename string = "settings.json"
+var SettingsFilename string = "settings.json"
 
 //Settings the struct that contains the schema for a settings file.
 //Settings files should *always* be ignored by your VCS!
@@ -48,7 +48,7 @@ func NewSettings() *Settings {
 //It returns a pointer to a Settings instance if successful (nil otherwise),
 //As well as an error if it fails (nil otherwise).
 func LoadSettings() (*Settings, error) {
-    data, err := ioutil.ReadFile(settingsFilename)
+    data, err := ioutil.ReadFile(SettingsFilename)
     if err != nil {
         return nil, err
     }
@@ -72,7 +72,7 @@ func (s *Settings) Save() error {
         return err
     }
     
-    err = ioutil.WriteFile(settingsFilename, j, 0755)
+    err = ioutil.WriteFile(SettingsFilename, j, 0755)
 
     if err != nil {
         return err
