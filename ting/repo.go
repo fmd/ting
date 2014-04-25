@@ -149,6 +149,8 @@ func (r *Repo) ApplyMigration(m *Migration) error {
     switch m.Action {
         case "init":
             return m.ApplyInit(c)
+        case "document":
+            return m.ApplyDocument(c)
         case "structure":
             return m.ApplyStructure(c)
     }
