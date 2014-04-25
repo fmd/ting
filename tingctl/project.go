@@ -58,7 +58,7 @@ func startProject(name string) error {
     }
 
     //Create the migrations directory.
-    if err = mkProjectDir("migrations"); err != nil {
+    if err = mkProjectDir(ting.MigrationsDirName); err != nil {
         return err
     }
 
@@ -76,6 +76,8 @@ func startProject(name string) error {
     if err != nil {
         return err
     }
+
+    fmt.Println(r.Collections)
 
     return nil
 }
