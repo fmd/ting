@@ -105,7 +105,7 @@ func NewRepo() (*Repo, error) {
     if err != nil {
         return nil, err
     }
-    defer r.Session.Close()
+
     r.Db = r.Session.DB(r.Settings.MongoDb)
 
     for _, el := range RequiredCollections() {
@@ -131,7 +131,7 @@ func (r *Repo) MigrateAll() error {
     }
 
     for _, m := range migrations {
-        applied, err := r.ApplyMigration(m)
+        applied := r.ApplyMigration(m)
         if err != nil {
             return err
         }
@@ -155,7 +155,7 @@ func LoadRepo(checkCollections bool) (*Repo, error) {
     if err != nil {
         return nil, err
     }
-    defer r.Session.Close()
+
     r.Db = r.Session.DB(r.Settings.MongoDb)
 
     if checkCollections {
@@ -169,9 +169,9 @@ func LoadRepo(checkCollections bool) (*Repo, error) {
 
 //ApplyMigration applies a Migration.
 //It returns an error if unsuccessful, or a nil error otherwise.
-func (r *Repo) ApplyMigration(m *Migration) (bool, error) {
+func (r *Repo) ApplyMigration(m *Migration) bool {
     if !m.IsValid() {
-        return false, errors.New("Invalid migration.")
+        return false
     }
 
     c := r.Db.C(m.ContentType)
@@ -186,7 +186,7 @@ func (r *Repo) ApplyMigration(m *Migration) (bool, error) {
             return m.ApplyStructure(mc, c)
     }
 
-    return false, errors.New(fmt.Sprintf("Invalid action '%s'.", m.Action))
+    return false
 }
 
 //AddContentType adds a content type to this Repo.

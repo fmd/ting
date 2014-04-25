@@ -55,6 +55,8 @@ func main() {
 
     //The following functions all require a loaded Repo.
     r, err := ting.LoadRepo(!migrate)
+    defer r.Session.Close()
+
     if err != nil {
         panic(err)
     }

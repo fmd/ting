@@ -97,26 +97,26 @@ func (m *Migration) ApplyToMongo(mc *mgo.Collection) (bool, error) {
     return true, nil
 }
 
-func (m *Migration) ApplyInit(mc *mgo.Collection, c *mgo.Collection) (bool, error) {
+func (m *Migration) ApplyInit(mc *mgo.Collection, c *mgo.Collection) bool {
     err := c.Create(&mgo.CollectionInfo{})
     if err != nil {
-        return false, err
+        return false
     }
 
     applied, err := m.ApplyToMongo(mc)
     if err != nil {
-        return false, err
+        return false
     }
 
-    return applied, nil
+    return applied
 }
 
-func (m *Migration) ApplyDocument(mc *mgo.Collection, c *mgo.Collection) (bool, error) {
-    return false, nil
+func (m *Migration) ApplyDocument(mc *mgo.Collection, c *mgo.Collection) bool {
+    return false
 }
 
-func (m *Migration) ApplyStructure(mc *mgo.Collection, c *mgo.Collection) (bool, error) {
-    return false, nil
+func (m *Migration) ApplyStructure(mc *mgo.Collection, c *mgo.Collection) bool {
+    return false
 }
 
 //Serializes the migration to JSON for saving.
