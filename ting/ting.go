@@ -3,8 +3,8 @@ package ting
 import (
     "fmt"
     "errors"
-    "github.com/fmd/ting/ting/credentials"
-    "github.com/fmd/ting/ting/backends/mongo"
+    "github.com/fmd/ting/credentials"
+    "github.com/fmd/ting/backends/mongo"
 )
 
 type Ting struct {

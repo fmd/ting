@@ -2,7 +2,7 @@ package mongo
 
 import (
     "labix.org/v2/mgo"
-    "github.com/fmd/ting/ting/credentials"
+    "github.com/fmd/ting/credentials"
 )
 
 //A Repo represents a Mongo session and a database to act upon.

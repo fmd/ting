@@ -5,7 +5,7 @@ import (
     "fmt"
     "strings"
     "strconv"
-    "github.com/fmd/ting/ting/credentials"
+    "github.com/fmd/ting/credentials"
     "github.com/docopt/docopt-go"
 )
 
