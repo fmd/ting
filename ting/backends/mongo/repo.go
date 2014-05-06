@@ -2,6 +2,7 @@ package mongo
 
 import (
     "labix.org/v2/mgo"
+    "github.com/fmd/ting/ting/credentials"
 )
 
 //A Repo represents a Mongo session and a database to act upon.
@@ -25,49 +26,14 @@ func NewSession(hostname string) (*mgo.Session, error) {
 //NewRepo creates a *Repo instance.
 //BUG(Needs to include other credentials from the Mongo session)
 //It returns a nil *Repo and an error if unsuccessful, or a *Repo and a nil error otherwise.
-func NewRepo(hostname string, db string) (*Repo, error) {
+func NewRepo(c credentials.Credentials) (*Repo, error) {
     var err error
     r := &Repo{}
-    r.Session, err = NewSession(hostname)
+    r.Session, err = NewSession(c["dbhost"])
     if err != nil {
         return nil, err
     }
 
-    r.Db = r.Session.DB(db)
+    r.Db = r.Session.DB(c["dbname"])
     return r, nil
-}
-
-func (r *Repo) Init(credentials map[string]string) {
-
-}
-
-//Data
-func (r *Repo) UpsertContent(contentType string, content interface{}) {
-
-}
-
-func (r *Repo) GetContent(contentType string, id string) {
-
-}
-
-func (r *Repo) GetContents(contentType string, query interface{}) {
-
-}
-
-//Types
-func (r *Repo) Structure(contentType string) {
-
-}
-
-func (r *Repo) ContentTypes() {
-    
-}
-
-//Migrations
-func (r *Repo) Migrate() {
-
-}
-
-func (r *Repo) Rollback() {
-
 }

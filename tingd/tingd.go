@@ -5,7 +5,7 @@ import (
     "fmt"
     "strings"
     "strconv"
-    "github.com/fmd/ting/ting"
+    "github.com/fmd/ting/ting/credentials"
     "github.com/docopt/docopt-go"
 )
 
@@ -41,7 +41,7 @@ func usage() string {
 func main() {
     args, _ := docopt.Parse(usage(), nil, true,fmt.Sprintf("tingd %s", version), false)
 
-    c := ting.NewCredentials()
+    c := credentials.NewCredentials()
 
     c["dbback"] = args["--backend"].(string)
     c["dbhost"] = args["--host"].(string)

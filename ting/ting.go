@@ -3,6 +3,7 @@ package ting
 import (
     "fmt"
     "errors"
+    "github.com/fmd/ting/ting/credentials"
     "github.com/fmd/ting/ting/backends/mongo"
 )
 
@@ -10,37 +11,17 @@ type Ting struct {
     Backend Backend
 }
 
-type Credentials map[string]string
-
-func NewCredentials() Credentials {
-    c := make(Credentials)
-    c["dbback"] = "mongodb"
-    c["dbhost"] = "localhost"
-    c["dbname"] = ""
-    c["dbuser"] = ""
-    c["dbpass"] = ""
-
-    return c
-}
-
-// ["backend"] : mongodb | (couchdb)
-// ["hostname"] : localhost
-//
-
 //NewTing creates a new *Ting instance.
 //BUG(Needs to not default to mongo)
-
-func NewTing(c Credentials) (*Ting, error) {
+//Returns a *Ting and a nil error if successful, or a nil *Ting and an error otherwise.
+func NewTing(c credentials.Credentials) (*Ting, error) {
     var err error
-
-    hostname := c["dbhost"]
-    dbname := c["dbname"]
 
     t := &Ting{}
 
     switch c["dbback"] {
         case "mongodb":
-            t.Backend, err = mongo.NewRepo(hostname, dbname)
+            t.Backend, err = mongo.NewRepo(c)
         case "couchdb":
             return nil, errors.New("CouchDB currently unsupported.")
         default:
