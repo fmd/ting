@@ -7,6 +7,8 @@ import (
     "github.com/docopt/docopt-go"
 )
 
+var version string = "v0.1.0"
+
 func workingDir() string {
     dir, err := os.Getwd()
     if err != nil {
@@ -33,6 +35,6 @@ Options:
 }
 
 func main() {
-    args, _ := docopt.Parse(usage(), nil, true, "gomictl v0.1.0", false)
+    args, _ := docopt.Parse(usage(), nil, true, fmt.Sprintf("tingctl %s", version), false)
     fmt.Println(args)
 }
