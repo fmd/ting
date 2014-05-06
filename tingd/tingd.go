@@ -5,8 +5,6 @@ import (
     "fmt"
     "strings"
     "strconv"
-    "net/http"
-    "github.com/fitstar/falcore"
     "github.com/docopt/docopt-go"
 )
 
@@ -38,15 +36,7 @@ func usage() string {
             --version       Show version.`, workingDir())
 }
 
-func pipeline() *falcore.Pipeline {
-    p := falcore.NewPipeline()
-    p.Upstream.PushBack(helloFilter)
-    return p
-}
 
-func server(port int, pipeline *falcore.Pipeline) *falcore.Server {
-    return falcore.NewServer(port, pipeline)
-}
 
 func main() {
     args, _ := docopt.Parse(usage(), nil, true,fmt.Sprintf("tingd %s", version), false)
@@ -54,12 +44,11 @@ func main() {
     if err != nil {
         panic(err)
     }
-    server := server(port, pipeline())
-    if err := server.ListenAndServe(); err != nil {
+
+    d := NewDaemon(port)
+    err = d.ListenAndServe()
+    if err != nil {
         panic(err)
     }
 }
 
-var helloFilter = falcore.NewRequestFilter(func(req *falcore.Request) *http.Response {
-    return falcore.StringResponse(req.HttpRequest, 200, nil, "hello world!")
-})
