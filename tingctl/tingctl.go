@@ -24,12 +24,11 @@ func usage() string {
 
         Usage:
             tingctl startproject <name>
+            tingctl contenttypes 
             tingctl --help
             tingctl --version
 
         Options:
-            -h | --host     MongoDB host string [default: localhost].
-            -d | --db       MongoDB database string [default: %s].
             --help          Show this screen.
             --version       Show version.`, binary, workingDir())
 }

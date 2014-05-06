@@ -1,6 +1,7 @@
 package main
 
 import (
+    "strings"
     "net/http"
     "github.com/fmd/ting/ting"
     "github.com/fmd/ting/credentials"
@@ -38,9 +39,16 @@ func (d *Daemon) ListenAndServe() error {
 }
 
 func (d *Daemon) InitPipeline() {
+
+    var helloFilter = falcore.NewRequestFilter(func(req *falcore.Request) *http.Response {
+        names, err := d.Ting.Backend.ContentTypes()
+        if err != nil {
+            panic(err)
+        }
+
+        name := strings.Join(names, " ~ ")
+        return falcore.StringResponse(req.HttpRequest, 200, nil, name)
+    })
+
     d.Pipeline.Upstream.PushBack(helloFilter)
 }
-
-var helloFilter = falcore.NewRequestFilter(func(req *falcore.Request) *http.Response {
-    return falcore.StringResponse(req.HttpRequest, 200, nil, "hello world!")
-})
