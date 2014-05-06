@@ -29,26 +29,30 @@ func usage() string {
             tingd --version
 
         Options:
-            -h | --host     MongoDB host string [default: localhost].
-            -d | --db       MongoDB database string [default: %s].
+            -h | --host     DB host string [default: localhost].
+            -d | --db       DB database string [default: %s].
             -p | --port     The port to listen on [default: 5000].
             --help          Show this screen.
             --version       Show version.`, workingDir())
 }
 
-
-
 func main() {
     args, _ := docopt.Parse(usage(), nil, true,fmt.Sprintf("tingd %s", version), false)
+
+    host := args["--host"].(string)
+    db := args["--db"].(string)
     port, err := strconv.Atoi(args["--port"].(string))
     if err != nil {
         panic(err)
     }
 
-    d := NewDaemon(port)
+    d, err := NewDaemon(host, db, port)
+    if err != nil {
+        panic(err)
+    }
+
     err = d.ListenAndServe()
     if err != nil {
         panic(err)
     }
 }
-
