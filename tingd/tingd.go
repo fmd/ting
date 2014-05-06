@@ -4,6 +4,7 @@ import (
     "os"
     "fmt"
     "strings"
+    "github.com/fitstar/falcore"
     "github.com/docopt/docopt-go"
 )
 
@@ -22,19 +23,24 @@ func workingDir() string {
 func usage() string {
     return fmt.Sprintf(`tingd.
 
-    Usage:
-        tingctl [--host=<hostname>] [--db=<dbname]
-        tingctl --help
-        tingctl --version
+        Usage:
+            tingd [--host=<hostname>] [--db=<dbname]
+            tingd --help
+            tingd --version
 
-    Options:
-        -d | --db       MongoDB database string [default: %s].
-        -h | --host     MongoDB host string [default: localhost].
-        --help          Show this screen.
-        --version       Show version.`, workingDir())
+        Options:
+            -h | --host     MongoDB host string [default: localhost].
+            -d | --db       MongoDB database string [default: %s].
+            -p | --port     The port to listen on [default: 8000].
+            --help          Show this screen.
+            --version       Show version.`, workingDir())
+}
+
+func initFalcore(port int) {
+
 }
 
 func main() {
     args, _ := docopt.Parse(usage(), nil, true,fmt.Sprintf("tingd %s", version), false)
-    fmt.Println(args)
+    if
 }
