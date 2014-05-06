@@ -25,7 +25,7 @@ func NewSession(hostname string) (*mgo.Session, error) {
 //NewRepo creates a *Repo instance.
 //BUG(Needs to include other credentials from the Mongo session)
 //It returns a nil *Repo and an error if unsuccessful, or a *Repo and a nil error otherwise.
-func NewRepo(hostname string, db string) error {
+func NewRepo(hostname string, db string) (*Repo, error) {
     var err error
     r := &Repo{}
     r.Session, err = NewSession(hostname)
