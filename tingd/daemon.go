@@ -1,51 +1,51 @@
 package main
 
 import (
-    "net/http"
-    "github.com/fmd/ting/ting"
-    "github.com/fmd/ting/credentials"
-    "github.com/fitstar/falcore"
+	"github.com/fitstar/falcore"
+	"github.com/fmd/ting/credentials"
+	"github.com/fmd/ting/ting"
+	"net/http"
 )
 
 type Daemon struct {
-    Ting *ting.Ting
-    Server *falcore.Server
-    Pipeline *falcore.Pipeline
+	Ting     *ting.Ting
+	Server   *falcore.Server
+	Pipeline *falcore.Pipeline
 }
 
 func NewDaemon(c credentials.Credentials, port int) (*Daemon, error) {
-    var err error
-    d := &Daemon{}
-    d.Pipeline = falcore.NewPipeline()
-    d.Server = falcore.NewServer(port, d.Pipeline)
+	var err error
+	d := &Daemon{}
+	d.Pipeline = falcore.NewPipeline()
+	d.Server = falcore.NewServer(port, d.Pipeline)
 
-    d.InitPipeline()
+	d.InitPipeline()
 
-    d.Ting, err = ting.NewTing(c)
-    if err != nil {
-        return nil, err
-    }
+	d.Ting, err = ting.NewTing(c)
+	if err != nil {
+		return nil, err
+	}
 
-    return d, nil
+	return d, nil
 }
 
 func (d *Daemon) ListenAndServe() error {
-    err := d.Server.ListenAndServe()
-    if err != nil {
-        return err
-    }
-    return nil
+	err := d.Server.ListenAndServe()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (d *Daemon) InitPipeline() {
-    var helloFilter = falcore.NewRequestFilter(func(req *falcore.Request) *http.Response {
-        err := d.Ting.Backend.StructureType([]byte(`{"_id":"image","structure":{"url":"", "alt":""}}`))
-        if err != nil {
-            panic(err)
-        }
+	var helloFilter = falcore.NewRequestFilter(func(req *falcore.Request) *http.Response {
+		err := d.Ting.Backend.StructureType([]byte(`{"_id":"image","structure":{"url":"", "alt":""}}`))
+		if err != nil {
+			panic(err)
+		}
 
-        return falcore.StringResponse(req.HttpRequest, 200, nil, "Hello")
-    })
+		return falcore.StringResponse(req.HttpRequest, 200, nil, "Hello")
+	})
 
-    d.Pipeline.Upstream.PushBack(helloFilter)
+	d.Pipeline.Upstream.PushBack(helloFilter)
 }
