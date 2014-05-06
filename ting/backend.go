@@ -12,8 +12,4 @@ type Backend interface {
     //Types
     Structure(contentType string)
     ContentTypes()
-
-    //Migrations
-    Migrate()
-    Rollback()
 }
