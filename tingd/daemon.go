@@ -12,14 +12,15 @@ type Daemon struct {
     Pipeline *falcore.Pipeline
 }
 
-func NewDaemon(dbHost string, dbName string, port int) (*Daemon, error) {
+func NewDaemon(c ting.Credentials, port int) (*Daemon, error) {
     var err error
     d := &Daemon{}
     d.Pipeline = falcore.NewPipeline()
     d.Server = falcore.NewServer(port, d.Pipeline)
 
     d.InitPipeline()
-    d.Ting, err = ting.NewTing(dbHost, dbName)
+
+    d.Ting, err = ting.NewTing(c)
     if err != nil {
         return nil, err
     }
