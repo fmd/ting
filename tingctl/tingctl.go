@@ -20,18 +20,18 @@ func workingDir() string {
 }
 
 func usage() string {
-    return fmt.Sprintf(`tingCTL.
+    return fmt.Sprintf(`tingctl.
 
-Usage:
-    tingctl startproject <name>
-    tingctl --help
-    tingctl --version
+        Usage:
+            tingctl startproject <name>
+            tingctl --help
+            tingctl --version
 
-Options:
-    -h | --host MongoDB host string [default: 127.0.0.1].
-    -d | --db   MongoDB database string [default: %s].
-    --help      Show this screen.
-    --version   Show version.`, workingDir())
+        Options:
+            -h | --host     MongoDB host string [default: localhost].
+            -d | --db       MongoDB database string [default: %s].
+            --help          Show this screen.
+            --version       Show version.`, binary, workingDir())
 }
 
 func main() {
