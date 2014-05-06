@@ -41,7 +41,7 @@ func main() {
             if err := settingsSet(args["<key>"].(string), args["<value>"].(string)); err != nil {
                 panic(err)
             }
-            
+
         } else if args["get"].(bool) {
             s := settingsGet(args["<key>"].(string))
             if len(s) > 0 {

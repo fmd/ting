@@ -174,10 +174,7 @@ func MigrationIndex() (string, error) {
     return fmt.Sprintf("%s%s",strings.Repeat("0", 5 - len(num)),num), nil
 }
 
-//Saving a Migration creates a new file in ./migrations, and saves this Migration to it.
-//After a Migration has been saved, it can be applied using the ctl.
-//Returns a nil error if successful, or an error otherwise.
-func (m *Migration) Save() error {
+func (m *Migration) Complete() error {
     if !m.IsValid() {
         return errors.New("invalid migration, couldn't save to file.")
     }
@@ -192,6 +189,17 @@ func (m *Migration) Save() error {
     m.Id = strconv.FormatInt(m.Timestamp, 16)
     m.Filename = fmt.Sprintf("%s_%s_%s_%s.json", idx, m.Id, strings.ToLower(m.ContentType), strings.ToLower(m.Action))
 
+    return nil
+}
+
+//Saving a Migration creates a new file in ./migrations, and saves this Migration to it.
+//After a Migration has been saved, it can be applied using the ctl.
+//Returns a nil error if successful, or an error otherwise.
+func (m *Migration) Save() error {
+    if err := m.Complete(); err != nil {
+        return err
+    }
+    
     //Write the migration to a file.
     writePath := fmt.Sprintf("%s/%s", MigrationsDirName, m.Filename)
     data, err := m.Serialize()
