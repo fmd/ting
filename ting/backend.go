@@ -12,7 +12,7 @@ type Backend interface {
     GetContents(contentType string, query interface{})
 
     //StructureType uses serialized JSON to update the CMS structure of a content type.
-    StructureType(contentType string, structure []byte)
+    StructureType(structure []byte) error
 
     //ContentTypes gets a list of all available content types.
     ContentTypes() ([]string, error)

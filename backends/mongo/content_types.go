@@ -1,7 +1,25 @@
 package mongo
 
-func (r *Repo) StructureType(contentType string, structure []byte) {
+import (
+    "encoding/json"
+    "labix.org/v2/mgo/bson"
+)
 
+func (r *Repo) StructureType(structure []byte) error {
+    var err error
+    c := r.Db.C(structuresCollection)
+    s := make(interface{})
+    err = json.Unmarshal(structure, &s)
+    if err != nil {
+        return err
+    }
+
+    _, err = c.Upsert(bson.M{"_id":s.Id}, s)
+    if err != nil {
+        return err
+    }
+
+    return nil
 }
 
 func (r *Repo) ContentTypes() ([]string, error) {
@@ -10,10 +28,10 @@ func (r *Repo) ContentTypes() ([]string, error) {
         return nil, err
     }
 
-    names := make([]string,1)
+    names := make([]string,0)
 
     for _, name := range n {
-        if name != "structures" && name != "system.indexes" {
+        if name != "structures" && name != "system.indexes" && len(name) > 0 {
             names = append(names, name)
         }
     }

@@ -5,6 +5,8 @@ import (
     "github.com/fmd/ting/credentials"
 )
 
+var structuresCollection = "structures"
+
 //A Repo represents a Mongo session and a database to act upon.
 type Repo struct {
     Session *mgo.Session
