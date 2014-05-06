@@ -5,10 +5,15 @@ import (
 	"labix.org/v2/mgo/bson"
 )
 
+type Structure struct {
+	Id        string      `bson:"_id" json:"_id"`
+	Structure interface{} `bson:"structure" json:"structure"`
+}
+
 func (r *Repo) StructureType(structure []byte) error {
 	var err error
 	c := r.Db.C(structuresCollection)
-	s := make(interface{})
+	s := &Structure{}
 	err = json.Unmarshal(structure, &s)
 	if err != nil {
 		return err
@@ -31,7 +36,7 @@ func (r *Repo) ContentTypes() ([]string, error) {
 	names := make([]string, 0)
 
 	for _, name := range n {
-		if name != "structures" && name != "system.indexes" && len(name) > 0 {
+		if name != "structures" && name != "system.indexes" {
 			names = append(names, name)
 		}
 	}
