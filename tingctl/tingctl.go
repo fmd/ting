@@ -30,7 +30,7 @@ func usage() string {
 
         Options:
             --help          Show this screen.
-            --version       Show version.`, binary, workingDir())
+            --version       Show version.`, workingDir())
 }
 
 func main() {
