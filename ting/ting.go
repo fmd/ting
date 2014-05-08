@@ -3,7 +3,7 @@ package ting
 import (
     "fmt"
     "errors"
-    "github.com/fmd/ting/credentials"
+    "github.com/fmd/ting/types"
     "github.com/fmd/ting/backends/mongo"
 )
 

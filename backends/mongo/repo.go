@@ -2,7 +2,7 @@ package mongo
 
 import (
     "labix.org/v2/mgo"
-    "github.com/fmd/ting/credentials"
+    "github.com/fmd/ting/types"
 )
 
 var structuresCollection = "structures"

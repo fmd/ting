@@ -3,7 +3,7 @@ package main
 import (
     "net/http"
     "github.com/fmd/ting/ting"
-    "github.com/fmd/ting/credentials"
+    "github.com/fmd/ting/types"
     "github.com/fitstar/falcore"
 )
 
