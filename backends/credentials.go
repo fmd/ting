@@ -1,4 +1,4 @@
-package credentials
+package backends
 
 // ["dbback"] : mongodb | (couchdb)
 // ["dbhost"] : localhost
