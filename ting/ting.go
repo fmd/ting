@@ -14,7 +14,7 @@ type Ting struct {
 //NewTing creates a new *Ting instance.
 //BUG(Needs to not default to mongo)
 //Returns a *Ting and a nil error if successful, or a nil *Ting and an error otherwise.
-func NewTing(c credentials.Credentials) (*Ting, error) {
+func NewTing(c types.Credentials) (*Ting, error) {
     var err error
 
     t := &Ting{}

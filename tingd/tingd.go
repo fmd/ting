@@ -41,7 +41,7 @@ func usage() string {
 func main() {
     args, _ := docopt.Parse(usage(), nil, true,fmt.Sprintf("tingd %s", version), false)
 
-    c := credentials.NewCredentials()
+    c := types.NewCredentials()
 
     c["dbback"] = args["--backend"].(string)
     c["dbhost"] = args["--host"].(string)

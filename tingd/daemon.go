@@ -13,7 +13,7 @@ type Daemon struct {
     Pipeline *falcore.Pipeline
 }
 
-func NewDaemon(c credentials.Credentials, port int) (*Daemon, error) {
+func NewDaemon(c types.Credentials, port int) (*Daemon, error) {
     var err error
     d := &Daemon{}
     d.Pipeline = falcore.NewPipeline()
