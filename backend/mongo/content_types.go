@@ -3,12 +3,13 @@ package mongo
 import (
 	"encoding/json"
 	"labix.org/v2/mgo/bson"
+	"github.com/fmd/ting/backend"
 )
 
 func (r *Repo) StructureType(structure []byte) error {
 	var err error
 	c := r.Db.C(structuresCollection)
-	s := make(interface{})
+	s := &backend.ContentType{}
 	err = json.Unmarshal(structure, &s)
 	if err != nil {
 		return err
