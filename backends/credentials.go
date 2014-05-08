@@ -8,12 +8,12 @@ package backends
 type Credentials map[string]string
 
 func NewCredentials() Credentials {
-    c := make(Credentials)
-    c["dbback"] = "mongodb"
-    c["dbhost"] = "localhost"
-    c["dbname"] = ""
-    c["dbuser"] = ""
-    c["dbpass"] = ""
+	c := make(Credentials)
+	c["dbback"] = "mongodb"
+	c["dbhost"] = "localhost"
+	c["dbname"] = ""
+	c["dbuser"] = ""
+	c["dbpass"] = ""
 
-    return c
+	return c
 }
