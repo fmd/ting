@@ -1,13 +1,14 @@
 package main
 
 import (
-	"os"
-	"github.com/go-martini/martini"
-	"github.com/fmd/ting/ting"
 	"github.com/fmd/ting/backend"
+	"github.com/fmd/ting/ting"
+	"github.com/go-martini/martini"
+	"os"
 )
 
 type Daemon struct {
+	Port    string
 	Ting    *ting.Ting
 	Martini *martini.ClassicMartini
 }
@@ -15,7 +16,7 @@ type Daemon struct {
 func NewDaemon(port string, b backend.Credentials) (*Daemon, error) {
 	var err error
 	d := &Daemon{}
-
+	d.Port = port
 	d.Ting, err = ting.NewTing(b)
 	if err != nil {
 		return nil, err
@@ -24,7 +25,7 @@ func NewDaemon(port string, b backend.Credentials) (*Daemon, error) {
 	d.Martini = martini.Classic()
 	d.Routes()
 
-	err = os.Setenv("PORT", port)
+	err = os.Setenv("PORT", d.Port)
 	if err != nil {
 		return nil, err
 	}

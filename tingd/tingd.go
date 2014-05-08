@@ -39,7 +39,7 @@ func usage() string {
 
 func main() {
 	var err error
-    args, _ := docopt.Parse(usage(), nil, true, fmt.Sprintf("tingd %s", version), false)
+	args, _ := docopt.Parse(usage(), nil, true, fmt.Sprintf("tingd %s", version), false)
 
 	c := backend.NewCredentials()
 

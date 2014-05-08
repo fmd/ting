@@ -2,8 +2,8 @@ package mongo
 
 import (
 	"encoding/json"
-	"labix.org/v2/mgo/bson"
 	"github.com/fmd/ting/backend"
+	"labix.org/v2/mgo/bson"
 )
 
 func (r *Repo) StructureType(structure []byte) error {
