@@ -1,4 +1,4 @@
-package ting
+package backends
 
 type Backend interface {
 

@@ -8,7 +8,7 @@ import (
 )
 
 type Ting struct {
-	Backend Backend
+	Backend backends.Backend
 }
 
 //NewTing creates a new *Ting instance.
