@@ -1,4 +1,4 @@
-package backends
+package backend
 
 type Backend interface {
 
@@ -14,6 +14,6 @@ type Backend interface {
 	//StructureType uses serialized JSON to update the CMS structure of a content type.
 	StructureType(structure []byte) error
 
-	//ContentTypes gets a list of all available content backends.
+	//ContentTypes gets a list of all available content backend.
 	ContentTypes() ([]string, error)
 }

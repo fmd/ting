@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/fitstar/falcore"
-	"github.com/fmd/ting/backends"
+	"github.com/fmd/ting/backend"
 	"github.com/fmd/ting/ting"
 	"net/http"
 )
@@ -13,7 +13,7 @@ type Daemon struct {
 	Pipeline *falcore.Pipeline
 }
 
-func NewDaemon(c backends.Credentials, port int) (*Daemon, error) {
+func NewDaemon(c backend.Credentials, port int) (*Daemon, error) {
 	var err error
 	d := &Daemon{}
 	d.Pipeline = falcore.NewPipeline()

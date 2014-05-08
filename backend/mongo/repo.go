@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"github.com/fmd/ting/backends"
+	"github.com/fmd/ting/backend"
 	"labix.org/v2/mgo"
 )
 
@@ -28,7 +28,7 @@ func NewSession(hostname string) (*mgo.Session, error) {
 //NewRepo creates a *Repo instance.
 //BUG(Needs to include other credentials from the Mongo session)
 //It returns a nil *Repo and an error if unsuccessful, or a *Repo and a nil error otherwise.
-func NewRepo(c backends.Credentials) (*Repo, error) {
+func NewRepo(c backend.Credentials) (*Repo, error) {
 	var err error
 	r := &Repo{}
 	r.Session, err = NewSession(c["dbhost"])

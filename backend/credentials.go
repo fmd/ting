@@ -1,4 +1,4 @@
-package backends
+package backend
 
 // ["dbback"] : mongodb | (couchdb)
 // ["dbhost"] : localhost
