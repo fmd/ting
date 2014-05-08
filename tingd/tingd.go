@@ -52,7 +52,7 @@ func main() {
 		panic(err)
 	}
 
-	d, err := NewDaemon(c, port)
+	d, err := NewDaemon(port, c)
 	if err != nil {
 		panic(err)
 	}

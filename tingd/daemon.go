@@ -12,7 +12,7 @@ type Daemon struct {
 	Martini *martini.ClassicMartini
 }
 
-func NewDaemon(b backend.Credentials, port string) (*Daemon, error) {
+func NewDaemon(port string, b backend.Credentials) (*Daemon, error) {
 	var err error
 	d := &Daemon{}
 
@@ -22,9 +22,7 @@ func NewDaemon(b backend.Credentials, port string) (*Daemon, error) {
 	}
 
 	d.Martini = martini.Classic()
-	d.Martini.Get("/", func() string {
-		return "Hello, world!"
-	})
+	d.Routes()
 
 	err = os.Setenv("PORT", port)
 	if err != nil {
