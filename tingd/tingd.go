@@ -5,7 +5,6 @@ import (
 	"github.com/docopt/docopt-go"
 	"github.com/fmd/ting/backend"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -39,7 +38,8 @@ func usage() string {
 }
 
 func main() {
-	args, _ := docopt.Parse(usage(), nil, true, fmt.Sprintf("tingd %s", version), false)
+	var err error
+    args, _ := docopt.Parse(usage(), nil, true, fmt.Sprintf("tingd %s", version), false)
 
 	c := backend.NewCredentials()
 
@@ -47,7 +47,7 @@ func main() {
 	c["dbhost"] = args["--host"].(string)
 	c["dbname"] = args["--db"].(string)
 
-	port, err := strconv.Atoi(args["--port"].(string))
+	port := args["--port"].(string)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +57,7 @@ func main() {
 		panic(err)
 	}
 
-	err = d.ListenAndServe()
+	err = d.Run()
 	if err != nil {
 		panic(err)
 	}

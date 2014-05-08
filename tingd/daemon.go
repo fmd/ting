@@ -1,27 +1,32 @@
 package main
 
 import (
-	"github.com/fitstar/falcore"
-	"github.com/fmd/ting/backend"
+	"os"
+	"github.com/go-martini/martini"
 	"github.com/fmd/ting/ting"
-	"net/http"
+	"github.com/fmd/ting/backend"
 )
 
 type Daemon struct {
-	Ting     *ting.Ting
-	Server   *falcore.Server
-	Pipeline *falcore.Pipeline
+	Ting    *ting.Ting
+	Martini *martini.ClassicMartini
 }
 
-func NewDaemon(c backend.Credentials, port int) (*Daemon, error) {
+func NewDaemon(b backend.Credentials, port string) (*Daemon, error) {
 	var err error
 	d := &Daemon{}
-	d.Pipeline = falcore.NewPipeline()
-	d.Server = falcore.NewServer(port, d.Pipeline)
 
-	d.InitPipeline()
+	d.Ting, err = ting.NewTing(b)
+	if err != nil {
+		return nil, err
+	}
 
-	d.Ting, err = ting.NewTing(c)
+	d.Martini = martini.Classic()
+	d.Martini.Get("/", func() string {
+		return "Hello, world!"
+	})
+
+	err = os.Setenv("PORT", port)
 	if err != nil {
 		return nil, err
 	}
@@ -29,23 +34,7 @@ func NewDaemon(c backend.Credentials, port int) (*Daemon, error) {
 	return d, nil
 }
 
-func (d *Daemon) ListenAndServe() error {
-	err := d.Server.ListenAndServe()
-	if err != nil {
-		return err
-	}
+func (d *Daemon) Run() error {
+	d.Martini.Run()
 	return nil
-}
-
-func (d *Daemon) InitPipeline() {
-	var helloFilter = falcore.NewRequestFilter(func(req *falcore.Request) *http.Response {
-		err := d.Ting.Backend.StructureType([]byte(`{"_id":"image","structure":{"url":"", "alt":""}}`))
-		if err != nil {
-			panic(err)
-		}
-
-		return falcore.StringResponse(req.HttpRequest, 200, nil, "Hello")
-	})
-
-	d.Pipeline.Upstream.PushBack(helloFilter)
 }

@@ -1,19 +1,15 @@
 package backend
 
 // ["dbback"] : mongodb | (couchdb)
-// ["dbhost"] : localhost
-// ["dbname"] : ""
-// ["dbuser"] : ""
-// ["dbpass"] : ""
 type Credentials map[string]string
 
 func NewCredentials() Credentials {
 	c := make(Credentials)
-	c["dbback"] = "mongodb"
-	c["dbhost"] = "localhost"
-	c["dbname"] = ""
-	c["dbuser"] = ""
-	c["dbpass"] = ""
+	c["dbback"] = "mongodb"    //Database backend
+	c["dbhost"] = "localhost"  //Database host
+	c["dbname"] = ""           //Database name
+	c["dbuser"] = ""           //Database user
+	c["dbpass"] = ""           //Database password
 
 	return c
 }
