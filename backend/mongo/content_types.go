@@ -2,24 +2,23 @@ package mongo
 
 import (
     "github.com/fmd/ting/backend"
-    "github.com/fmd/ting/response"
     "labix.org/v2/mgo/bson"
 )
 
-func (r *Repo) PushContentType(t *backend.ContentType) *response.R {
+func (r *Repo) PushContentType(t *backend.ContentType) error {
     var err error
 
     c := r.Db.C(structuresCollection)
 
     _, err = c.Upsert(bson.M{"_id": t.Id}, t)
     if err != nil {
-        return response.Error(err)
+        return err
     }
 
-    return response.Success(nil)
+    return nil
 }
 
-func (r *Repo) ContentTypes() *response.R {
+func (r *Repo) ContentTypes() ([]string, error) {
     var err error
 
     types := make([]string, 0)
@@ -32,13 +31,13 @@ func (r *Repo) ContentTypes() *response.R {
     }
 
     if err = it.Close(); err != nil {
-        return response.Error(err)
+        return nil, err
     }
 
-    return response.Success(types)
+    return types, nil
 }
 
-func (r *Repo) ContentType(name string) *response.R {
+func (r *Repo) ContentType(name string) (interface{}, error) {
     var err error
 
     c := r.Db.C(structuresCollection)
@@ -46,8 +45,8 @@ func (r *Repo) ContentType(name string) *response.R {
 
     err = c.FindId(name).One(&s)
     if err != nil {
-        return response.Error(err)
+        return nil, err
     }
 
-    return response.Success(s)
+    return s, nil
 }

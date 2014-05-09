@@ -1,9 +1,5 @@
 package backend
 
-import (
-    "github.com/fmd/ting/response"
-)
-
 //Credentials is the credentials, shared across backends.
 // ["dbback"] : mongodb | (couchdb)
 type Credentials map[string]string
@@ -36,20 +32,20 @@ type ContentType struct {
 type B interface {
 
     //UpsertContent inserts or updates a piece of content based on its type.
-    PushContent(content []byte) *response.R
+    PushContent(content []byte) error
 
     //Content uses an id to get a piece of content based on its type.
-    Content(contentType string, id string) *response.R
+    Content(contentType string, id string) (interface{}, error)
 
     //Contents gets multiple pieces of content based on a query and a content type.
-    Contents(contentType string, query interface{}) *response.R
+    Contents(contentType string, query interface{}) ([]interface{}, error)
 
     //StructureType uses serialized JSON to update the CMS structure of a content type.
-    PushContentType(*ContentType) *response.R
+    PushContentType(*ContentType) error
 
     //ContentTypes gets a list of all available content backend.
-    ContentTypes() *response.R
+    ContentTypes() ([]string, error)
 
     //ContentType gets the structure of a content type by its name.
-    ContentType(name string) *response.R
+    ContentType(name string) (interface{}, error)
 }

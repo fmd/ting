@@ -5,8 +5,8 @@ import (
     "errors"
     "fmt"
     "github.com/fmd/ting/backend"
-    "github.com/fmd/ting/backend/mongo"
     "github.com/fmd/ting/response"
+    "github.com/fmd/ting/backend/mongo"
 )
 
 type Ting struct {
@@ -69,6 +69,7 @@ func (t *Ting) ValidateContentType(name string, structure []byte) (*backend.Cont
     }
 
     s := &backend.ContentType{}
+    s.Id = name
 
     //Attempt to unmarshal the structure into the *ContentType.
     err = json.Unmarshal(structure, &s.Structure)
@@ -77,13 +78,13 @@ func (t *Ting) ValidateContentType(name string, structure []byte) (*backend.Cont
     }
 
     //Attempt to get existing content types.
-    resp := t.Backend.ContentTypes()
-    if resp.Error != nil {
-        return nil, resp.Error
+    types, err := t.Backend.ContentTypes()
+    if err != nil {
+        return nil, err
     }
 
     //Reserved types, existing types and our own name form a slice.
-    types := append(resp.Data.([]string), ReservedTypes()...)
+    types = append(types, ReservedTypes()...)
     types = append(types, name)
 
     //Make sure that every field is valid by ensuring every field is in the slice.
@@ -126,15 +127,30 @@ func (t *Ting) PushContentType(name string, body []byte) (int, response.JSend) {
         return response.Error(err).Wrap()
     }
 
-    return t.Backend.PushContentType(c).Wrap()
+    err = t.Backend.PushContentType(c)
+    if err != nil {
+        return response.Error(err).Wrap()
+    }
+
+    return response.Success(nil).Wrap()
 }
 
 //ContentTypes gets a list of all available content backend.
 func (t *Ting) ContentTypes() (int, response.JSend) {
-    return t.Backend.ContentTypes().Wrap()
+    types, err := t.Backend.ContentTypes()
+    if err != nil {
+        return response.Error(err).Wrap()
+    }
+
+    return response.Success(types).Wrap()
 }
 
 //ContentType gets the structure of a content type by its name.
 func (t *Ting) ContentType(name string) (int, response.JSend) {
-    return t.Backend.ContentType(name).Wrap()
+    ty, err := t.Backend.ContentType(name)
+    if err != nil {
+        return response.Error(err).Wrap()
+    }
+
+    return response.Success(ty).Wrap()
 }
