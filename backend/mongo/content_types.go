@@ -7,13 +7,13 @@ import (
 	"labix.org/v2/mgo/bson"
 )
 
-func (r *Repo) PushType(structure []byte) *response.R {
+func (r *Repo) PushContentType(name string, structure []byte) *response.R {
 	var err error
 
 	c := r.Db.C(structuresCollection)
-	s := &backend.ContentType{}
+	s := &backend.ContentType{Id: name}
 
-	err = json.Unmarshal(structure, &s)
+	err = json.Unmarshal(structure, &s.Structure)
 	if err != nil {
 		return response.Error(err)
 	}
@@ -43,4 +43,18 @@ func (r *Repo) ContentTypes() *response.R {
 	}
 
 	return response.Success(types)
+}
+
+func (r *Repo) ContentType(name string) *response.R {
+	var err error
+
+	c := r.Db.C(structuresCollection)
+	s := &backend.ContentType{}
+
+	err = c.FindId(name).One(&s)
+	if err != nil {
+		return response.Error(err)
+	}
+
+	return response.Success(s)
 }
