@@ -1,7 +1,7 @@
 package backend
 
 import (
-    "github.com/fmd/ting/backend/response"
+    "github.com/fmd/ting/response"
 )
 
 //Credentials is the credentials, shared across backends.

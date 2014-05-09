@@ -6,7 +6,7 @@ import (
     "fmt"
     "github.com/fmd/ting/backend"
     "github.com/fmd/ting/backend/mongo"
-    "github.com/fmd/ting/backend/response"
+    "github.com/fmd/ting/response"
 )
 
 type Ting struct {

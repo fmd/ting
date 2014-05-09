@@ -1,7 +1,7 @@
 package main
 
 import (
-    "github.com/fmd/ting/backend/response"
+    "github.com/fmd/ting/response"
     "github.com/go-martini/martini"
     "github.com/martini-contrib/render"
     "io/ioutil"

@@ -1,7 +1,7 @@
 package mongo
 
 import (
-    "github.com/fmd/ting/backend/response"
+    "github.com/fmd/ting/response"
 )
 
 func (r *Repo) PushContent(content []byte) *response.R {
