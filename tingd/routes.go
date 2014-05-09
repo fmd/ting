@@ -18,23 +18,18 @@ func (d *Daemon) Routes() {
 }
 
 func (d *Daemon) getContentTypes(r render.Render) {
-	r.JSON(d.Ting.Backend.ContentTypes().ToResponse())
+	r.JSON(d.Ting.ContentTypes())
 }
 
 func (d *Daemon) getContentType(r render.Render, params martini.Params) {
-	r.JSON(d.Ting.Backend.ContentType(params["name"]).ToResponse())
+	r.JSON(d.Ting.ContentType(params["name"]))
 }
 
 func (d *Daemon) setContentType(r render.Render, params martini.Params, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		r.JSON(500, &response.W{Data: nil, Status: "error", Message: err.Error()})
+		r.JSON(response.Error(err).Wrap())
 	}
 
-	c, err := d.Ting.ValidateContentType(params["name"], body)
-	if err != nil {
-		r.JSON(500, &response.W{Data: nil, Status: "error", Message: err.Error()})
-	}	
-
-	r.JSON(d.Ting.Backend.PushContentType(c).ToResponse())
+	r.JSON(d.Ting.PushContentType(params["name"], body))
 }

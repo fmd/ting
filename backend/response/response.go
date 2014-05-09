@@ -34,14 +34,14 @@ func Fail(data interface{}) *R {
 
 //W is the struct that can be marshalled alongside a http code to a response.
 //See more at http://labs.omniti.com/labs/jsend
-type W struct {
+type JSend struct {
 	Data    interface{} `json:"data"`    //Wrapper around any returned data.
 	Status  string      `json:"status"`  // "success" | "fail" | "error"
 	Message string      `json:"message"` // Error message.
 }
 
-func (r *R) ToResponse() (int, W) {
-	resp := W{
+func (r *R) Wrap() (int, JSend) {
+	resp := JSend{
 		r.Data,
     	r.Status,
     	"",

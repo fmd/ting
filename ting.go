@@ -2,6 +2,7 @@ package ting
 
 import (
     "github.com/fmd/ting/backend/mongo"
+    "github.com/fmd/ting/backend/response"
     "github.com/fmd/ting/backend"
     "encoding/json"
     "errors"
@@ -101,4 +102,39 @@ func (t *Ting) ValidateContentType(name string, structure []byte) (*backend.Cont
 
     //Return our content type.
     return s, nil
+}
+
+//UpsertContent inserts or updates a piece of content based on its type.
+func (t *Ting) PushContent(content []byte) (int, response.JSend) {
+    return response.Success(nil).Wrap()
+}
+
+//Content uses an id to get a piece of content based on its type.
+func (t *Ting) Content(contentType string, id string) (int, response.JSend) {
+    return response.Success(nil).Wrap()
+}
+
+//Contents gets multiple pieces of content based on a query and a content type.
+func (t *Ting) Contents(contentType string, query interface{}) (int, response.JSend) {
+    return response.Success(nil).Wrap()
+}
+
+//StructureType uses serialized JSON to update the CMS structure of a content type.
+func (t *Ting) PushContentType(name string, body []byte) (int, response.JSend) {
+    c, err := t.ValidateContentType(name, body)
+    if err != nil {
+        return response.Error(err).Wrap()
+    }
+
+    return t.Backend.PushContentType(c).Wrap()
+}
+
+//ContentTypes gets a list of all available content backend.
+func (t *Ting) ContentTypes() (int, response.JSend) {
+    return t.Backend.ContentTypes().Wrap()
+}
+
+//ContentType gets the structure of a content type by its name.
+func (t *Ting) ContentType(name string) (int, response.JSend) {
+    return t.Backend.ContentType(name).Wrap()
 }
