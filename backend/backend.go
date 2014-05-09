@@ -4,21 +4,6 @@ import (
     "github.com/fmd/ting/backend/response"
 )
 
-//Credentials is the credentials, shared across backends.
-// ["dbback"] : mongodb | (couchdb)
-type Credentials map[string]string
-
-func NewCredentials() Credentials {
-    c := make(Credentials)
-    c["dbback"] = "mongodb"   //Database backend
-    c["dbhost"] = "localhost" //Database host
-    c["dbname"] = ""          //Database name
-    c["dbuser"] = ""          //Database user
-    c["dbpass"] = ""          //Database password
-
-    return c
-}
-
 //ContentTypeField is the Content Type Field struct
 type ContentTypeField struct {
     Type     string      `bson:"type" json:"type"`

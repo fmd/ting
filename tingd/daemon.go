@@ -14,7 +14,7 @@ type Daemon struct {
     Martini *martini.ClassicMartini
 }
 
-func NewDaemon(port string, b backend.Credentials) (*Daemon, error) {
+func NewDaemon(port string, b ting.Credentials) (*Daemon, error) {
     var err error
     d := &Daemon{}
     d.Port = port
