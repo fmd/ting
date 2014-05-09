@@ -1,28 +1,28 @@
 package mongo
 
 import (
-	"github.com/fmd/ting/backend/response"
 	"encoding/json"
-	"labix.org/v2/mgo/bson"
 	"errors"
 	"fmt"
+	"github.com/fmd/ting/backend/response"
+	"labix.org/v2/mgo/bson"
 )
 
 //Reserved content types
 const (
 	CT_STRING string = "string"
 	CT_BOOL   string = "bool"
-	CT_INT	  string = "int"
+	CT_INT    string = "int"
 	CT_LIST   string = "list"
 	CT_ARRAY  string = "array"
 )
 
 func ReservedType(t string) bool {
-	if  t == CT_STRING ||
-	  t == CT_BOOL ||
-	  t == CT_INT ||
-	  t == CT_LIST ||
-	  t == CT_ARRAY {
+	if t == CT_STRING ||
+		t == CT_BOOL ||
+		t == CT_INT ||
+		t == CT_LIST ||
+		t == CT_ARRAY {
 		return true
 	}
 	return false
