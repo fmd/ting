@@ -105,8 +105,64 @@ func (t *Ting) ValidateContentType(name string, structure []byte) (*backend.Cont
     return s, nil
 }
 
+//ValidateContentType makes sure that raw JSON content is valid to be turned into a *backend.Content.
+func (t *Ting) ValidateContent(contentType string, id interface{}, content []byte) (*backend.Content, error) {
+    var err error
+
+    //Check if the type is reserved.
+    if ReservedType(contentType) {
+
+        //We can't push content of reserved types.
+        return nil, errors.New(fmt.Sprintf("'%s' is a reserved content type.", contentType))
+    }
+
+    c := &backend.Content{}
+    c.Id = id
+
+    err = json.Unmarshal(content, &c.Content)
+    if err != nil {
+        return nil, err
+    }
+
+    //Attempt to get existing content types.
+    types, err := t.Backend.ContentTypes()
+    if err != nil {
+        return nil, err
+    }
+
+    //Reserved types, existing types and our own name form a slice.
+    types = append(types, ReservedTypes()...)
+    types = append(types, contentType)
+
+    //Make sure that every field is valid by ensuring every field is in the slice.
+    for _, field := range c.Content {
+        found := false
+        for _, ty := range types {
+            if field.Type == ty {
+                found = true
+            }
+        }
+
+        if !found {
+            return nil, errors.New(fmt.Sprintf("Content type '%s' does not exist.", field.Type))
+        }
+    }
+
+    return c, nil
+}
+
 //UpsertContent inserts or updates a piece of content based on its type.
-func (t *Ting) PushContent(content []byte) (int, response.JSend) {
+func (t *Ting) PushContent(contentType string, id interface{}, content []byte) (int, response.JSend) {
+    c, err := t.ValidateContent(contentType, id, content)
+    if err != nil {
+        return response.Error(err).Wrap()
+    }
+
+    err = t.Backend.PushContent(contentType, c)
+    if err != nil {
+        return response.Error(err).Wrap()
+    }
+
     return response.Success(nil).Wrap()
 }
 

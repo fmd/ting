@@ -36,7 +36,7 @@ type ContentField struct {
 
 //Content is the Content struct
 type Content struct {
-    Id string                       `bson:"_id" json:"_id"`
+    Id      interface{}             `bson:"_id" json:"_id"`
     Content map[string]ContentField `bson:"content" json:"content"`
 }
 
@@ -44,7 +44,7 @@ type Content struct {
 type B interface {
 
     //UpsertContent inserts or updates a piece of content based on its type.
-    PushContent(content *Content) error
+    PushContent(contentType string, content *Content) error
 
     //Content uses an id to get a piece of content based on its type.
     Content(contentType string, id string) (interface{}, error)
