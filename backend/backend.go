@@ -19,12 +19,6 @@ func NewCredentials() Credentials {
 	return c
 }
 
-//ContentType is the Content Type struct
-type ContentType struct {
-	Id        string      `bson:"_id" json:"_id"`
-	Structure interface{} `bson:"structure" json:"structure"`
-}
-
 //B is the interface that connects to one of our supported backends.
 type B interface {
 
@@ -36,7 +30,7 @@ type B interface {
 
 	//Contents gets multiple pieces of content based on a query and a content type.
 	Contents(contentType string, query interface{}) *response.R
-
+	
 	//StructureType uses serialized JSON to update the CMS structure of a content type.
 	PushContentType(name string, structure []byte) *response.R
 
