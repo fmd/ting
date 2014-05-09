@@ -1,17 +1,39 @@
 package main
 
 import (
-	"github.com/fmd/ting/backend"
 	"github.com/fmd/ting/backend/response"
-	"github.com/fmd/ting/ting"
+    "github.com/fmd/ting/backend/mongo"
+    "github.com/fmd/ting/backend"
 	"github.com/go-martini/martini"
 	"encoding/json"
+    "errors"
+    "fmt"
 	"os"
 )
 
+func NewBackend(c backend.Credentials) (backend.Backend, error) {
+    var err error
+    var b backend.Backend
+
+    switch c["dbback"] {
+    case "mongodb":
+        b, err = mongo.NewRepo(c)
+    case "couchdb":
+        return nil, errors.New("CouchDB currently unsupported.")
+    default:
+        return nil, errors.New(fmt.Sprintf("Invalid backend '%s'", c["dbback"]))
+    }
+
+    if err != nil {
+        return nil, err
+    }
+
+    return b, nil
+}
+
 type Daemon struct {
 	Port    string
-	Ting    *ting.Ting
+	Backend backend.Backend
 	Martini *martini.ClassicMartini
 }
 
@@ -19,7 +41,7 @@ func NewDaemon(port string, b backend.Credentials) (*Daemon, error) {
 	var err error
 	d := &Daemon{}
 	d.Port = port
-	d.Ting, err = ting.NewTing(b)
+	d.Backend, err = NewBackend(b)
 	if err != nil {
 		return nil, err
 	}

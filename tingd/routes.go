@@ -6,7 +6,7 @@ func (d *Daemon) Routes() {
 }
 
 func (d *Daemon) getContentTypes() (int, string) {
-	return RenderToJson(d.Ting.Backend.ContentTypes())
+	return RenderToJson(d.Backend.ContentTypes())
 }
 
 func (d *Daemon) getContentType() (int, string) {

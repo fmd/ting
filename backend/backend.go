@@ -4,6 +4,28 @@ import (
 	"github.com/fmd/ting/backend/response"
 )
 
+//Credentials is the credentials, shared across backends.
+// ["dbback"] : mongodb | (couchdb)
+type Credentials map[string]string
+
+func NewCredentials() Credentials {
+	c := make(Credentials)
+	c["dbback"] = "mongodb"   //Database backend
+	c["dbhost"] = "localhost" //Database host
+	c["dbname"] = ""          //Database name
+	c["dbuser"] = ""          //Database user
+	c["dbpass"] = ""          //Database password
+
+	return c
+}
+
+//ContentType is the Content Type struct
+type ContentType struct {
+	Id        string      `bson:"_id" json:"_id"`
+	Structure interface{} `bson:"structure" json:"structure"`
+}
+
+//Backend is the interface that connects to one of our supported backends.
 type Backend interface {
 
 	//UpsertContent inserts or updates a piece of content based on its type.

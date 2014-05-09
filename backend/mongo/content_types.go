@@ -23,7 +23,7 @@ func (r *Repo) PushType(structure []byte) *response.R {
 		return response.Error(err)
 	}
 
-	return nil
+	return response.Success(nil)
 }
 
 func (r *Repo) ContentTypes() *response.R {
