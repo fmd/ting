@@ -112,7 +112,12 @@ func (t *Ting) PushContent(content []byte) (int, response.JSend) {
 
 //Content uses an id to get a piece of content based on its type.
 func (t *Ting) Content(contentType string, id string) (int, response.JSend) {
-    return response.Success(nil).Wrap()
+    content, err := t.Backend.Content(contentType, id)
+    if err != nil {
+        return response.Error(err).Wrap()
+    }
+
+    return response.Success(content).Wrap()
 }
 
 //Contents gets multiple pieces of content based on a query and a content type.

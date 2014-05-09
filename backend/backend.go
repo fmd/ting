@@ -28,11 +28,23 @@ type ContentType struct {
     Structure map[string]ContentTypeField `bson:"structure" json:"structure"`
 }
 
+//ContentField is the Content Field struct
+type ContentField struct {
+    Type string `bson:"type" json:"type"`
+    Data string `bson:"data" json:"data"`
+}
+
+//Content is the Content struct
+type Content struct {
+    Id string                       `bson:"_id" json:"_id"`
+    Content map[string]ContentField `bson:"content" json:"content"`
+}
+
 //B is the interface that connects to one of our supported backends.
 type B interface {
 
     //UpsertContent inserts or updates a piece of content based on its type.
-    PushContent(content []byte) error
+    PushContent(content *Content) error
 
     //Content uses an id to get a piece of content based on its type.
     Content(contentType string, id string) (interface{}, error)

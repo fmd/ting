@@ -15,6 +15,14 @@ func (d *Daemon) Routes() {
         r.Get("/:name", d.getContentType)
         r.Post("/:name/edit", d.setContentType)
     })
+
+    m.Group("/:type", func(r martini.Router) {
+        r.Get("/:id", d.getContent)
+    })
+}
+
+func (d *Daemon) getContent(r render.Render, params martini.Params) {
+    r.JSON(d.Ting.Content(params["type"], params["id"]))
 }
 
 func (d *Daemon) getContentTypes(r render.Render) {
