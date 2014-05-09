@@ -13,9 +13,9 @@ import (
 
 //NewBackend creates a Backend instance from the credentials.
 //This function uses the c["dbback"] to choose a database backend.
-func NewBackend(c backend.Credentials) (backend.Backend, error) {
+func NewBackend(c backend.Credentials) (backend.B, error) {
 	var err error
-	var b backend.Backend
+	var b backend.B
 
 	switch c["dbback"] {
 	case "mongodb":
@@ -35,7 +35,7 @@ func NewBackend(c backend.Credentials) (backend.Backend, error) {
 
 type Daemon struct {
 	Port    string
-	Backend backend.Backend
+	Backend backend.B
 	Martini *martini.ClassicMartini
 }
 

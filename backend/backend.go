@@ -25,8 +25,8 @@ type ContentType struct {
 	Structure interface{} `bson:"structure" json:"structure"`
 }
 
-//Backend is the interface that connects to one of our supported backends.
-type Backend interface {
+//B is the interface that connects to one of our supported backends.
+type B interface {
 
 	//UpsertContent inserts or updates a piece of content based on its type.
 	PushContent(content []byte) *response.R
