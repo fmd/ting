@@ -11,6 +11,8 @@ import (
 	"os"
 )
 
+//NewBackend creates a Backend instance from the credentials.
+//This function uses the c["dbback"] to choose a database backend.
 func NewBackend(c backend.Credentials) (backend.Backend, error) {
 	var err error
 	var b backend.Backend
