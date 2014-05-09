@@ -43,8 +43,8 @@ type JSend struct {
 func (r *R) Wrap() (int, JSend) {
 	resp := JSend{
 		r.Data,
-    	r.Status,
-    	"",
+		r.Status,
+		"",
 	}
 
 	if r.Error != nil {

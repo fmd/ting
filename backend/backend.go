@@ -21,15 +21,15 @@ func NewCredentials() Credentials {
 
 //ContentTypeField is the Content Type Field struct
 type ContentTypeField struct {
-    Type     string      `bson:"type" json:"type"`
-    Required bool        `bson:"required" json:"required"`
-    Default  interface{} `bson:"default" json:"default"`
+	Type     string      `bson:"type" json:"type"`
+	Required bool        `bson:"required" json:"required"`
+	Default  interface{} `bson:"default" json:"default"`
 }
 
 //ContentType is the Content Type struct
 type ContentType struct {
-    Id        string                      `bson:"_id" json:"_id"`
-    Structure map[string]ContentTypeField `bson:"structure" json:"structure"`
+	Id        string                      `bson:"_id" json:"_id"`
+	Structure map[string]ContentTypeField `bson:"structure" json:"structure"`
 }
 
 //B is the interface that connects to one of our supported backends.

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/fmd/ting/backend/response"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
-	"github.com/fmd/ting/backend/response"
 	"io/ioutil"
 	"net/http"
 )

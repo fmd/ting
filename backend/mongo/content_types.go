@@ -1,8 +1,8 @@
 package mongo
 
 import (
-	"github.com/fmd/ting/backend/response"
 	"github.com/fmd/ting/backend"
+	"github.com/fmd/ting/backend/response"
 	"labix.org/v2/mgo/bson"
 )
 
