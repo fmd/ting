@@ -1,13 +1,17 @@
 package mongo
 
-func (r *Repo) UpsertContent(contentType string, content interface{}) {
+import (
+    "github.com/fmd/ting/backend/response"
+)
 
+func (r *Repo) PushContent(content []byte) *response.R {
+    return &response.R{}
 }
 
-func (r *Repo) GetContent(contentType string, id string) {
-
+func (r *Repo) Content(contentType string, id string) *response.R {
+    return &response.R{}
 }
 
-func (r *Repo) GetContents(contentType string, query interface{}) {
-
+func (r *Repo) Contents(contentType string, query interface{}) *response.R {
+    return &response.R{}
 }
