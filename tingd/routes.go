@@ -2,13 +2,13 @@ package main
 
 func (d *Daemon) Routes() {
 	d.Martini.Get("/types", d.getContentTypes)
+    d.Martini.Get("/type", d.getContentType)
 }
 
 func (d *Daemon) getContentTypes() (int, string) {
-	t, err := d.Ting.ContentTypes()
-	if err != nil {
-		return 500, "Error getting content types."
-	}
+	return RenderToJson(d.Ting.Backend.ContentTypes())
+}
 
-	return d.EncodeResponse(t)
+func (d *Daemon) getContentType() (int, string) {
+    return 200, "OK"
 }
