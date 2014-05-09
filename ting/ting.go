@@ -34,3 +34,7 @@ func NewTing(c backend.Credentials) (*Ting, error) {
 
 	return t, nil
 }
+
+func (t *Ting) ContentTypes() ([]string, error) {
+	return t.Backend.ContentTypes()
+}
