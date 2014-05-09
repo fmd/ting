@@ -50,7 +50,7 @@ type B interface {
     Content(contentType string, id string) (interface{}, error)
 
     //Contents gets multiple pieces of content based on a query and a content type.
-    Contents(contentType string, query interface{}) ([]interface{}, error)
+    Contents(contentType string, query interface{}) ([]*Content, error)
 
     //StructureType uses serialized JSON to update the CMS structure of a content type.
     PushContentType(*ContentType) error

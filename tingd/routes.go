@@ -17,12 +17,17 @@ func (d *Daemon) Routes() {
     })
 
     m.Group("/:type", func(r martini.Router) {
+        r.Get("", d.getContents)
         r.Get("/:id", d.getContent)
         r.Post("/new", d.insertContent)
     })
 }
 
 // /:type
+func (d *Daemon) getContents(r render.Render, params martini.Params) {
+    r.JSON(d.Ting.Contents(params["type"], nil))
+}
+
 func (d *Daemon) getContent(r render.Render, params martini.Params) {
     r.JSON(d.Ting.Content(params["type"], params["id"]))
 }

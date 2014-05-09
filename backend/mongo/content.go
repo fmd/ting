@@ -43,6 +43,24 @@ func (r *Repo) Content(contentType string, id string) (interface{}, error) {
     return content, nil
 }
 
-func (r *Repo) Contents(contentType string, query interface{}) ([]interface{}, error) {
-    return nil, nil
+//BUG(Doesn't actually use a query... just gets everything)
+func (r *Repo) Contents(contentType string, query interface{}) ([]*backend.Content, error) {
+    var err error
+
+    contents := make([]*backend.Content, 0)
+
+    c := r.Db.C(contentType)
+    it := c.Find(nil).Iter()
+
+    var res *backend.Content
+    for it.Next(&res) {
+        contents = append(contents, res)
+        res = &backend.Content{}
+    }
+
+    if err = it.Close(); err != nil {
+        return nil, err
+    }
+
+    return contents, nil
 }

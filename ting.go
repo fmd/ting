@@ -105,6 +105,7 @@ func (t *Ting) ValidateContentType(name string, structure []byte) (*backend.Cont
     return s, nil
 }
 
+//BUG(Still needs to actually validate against its own structure)
 //ValidateContentType makes sure that raw JSON content is valid to be turned into a *backend.Content.
 func (t *Ting) ValidateContent(contentType string, id interface{}, content []byte) (*backend.Content, error) {
     var err error
@@ -117,6 +118,7 @@ func (t *Ting) ValidateContent(contentType string, id interface{}, content []byt
     }
 
     c := &backend.Content{}
+    
     c.Id = id
 
     err = json.Unmarshal(content, &c.Content)
@@ -130,6 +132,19 @@ func (t *Ting) ValidateContent(contentType string, id interface{}, content []byt
         return nil, err
     }
 
+    //Make sure the content type we're trying to push actually exists.
+    found := false
+    for _, field := range types {
+        if contentType == field {
+            found = true
+            break
+        }
+    }
+
+    if !found {
+        return nil, errors.New(fmt.Sprintf("Content type '%s' does not exist.", contentType))
+    }
+
     //Reserved types, existing types and our own name form a slice.
     types = append(types, ReservedTypes()...)
     types = append(types, contentType)
@@ -140,6 +155,7 @@ func (t *Ting) ValidateContent(contentType string, id interface{}, content []byt
         for _, ty := range types {
             if field.Type == ty {
                 found = true
+                break
             }
         }
 
@@ -178,7 +194,12 @@ func (t *Ting) Content(contentType string, id string) (int, response.JSend) {
 
 //Contents gets multiple pieces of content based on a query and a content type.
 func (t *Ting) Contents(contentType string, query interface{}) (int, response.JSend) {
-    return response.Success(nil).Wrap()
+    contents, err := t.Backend.Contents(contentType, query)
+    if err != nil {
+        return response.Error(err).Wrap()
+    }    
+
+    return response.Success(contents).Wrap()
 }
 
 //StructureType uses serialized JSON to update the CMS structure of a content type.
