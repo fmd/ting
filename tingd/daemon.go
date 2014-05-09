@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/fmd/ting/backend"
 	"github.com/fmd/ting/ting"
 	"github.com/go-martini/martini"
-	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -41,10 +41,10 @@ func (d *Daemon) Run() error {
 }
 
 func (d *Daemon) EncodeResponse(in interface{}) (int, string) {
-    bytes, err := json.Marshal(in)
-    if err != nil {
-        return 500, fmt.Sprintf("Error encoding response to JSON: %s", err)
-    }
+	bytes, err := json.Marshal(in)
+	if err != nil {
+		return 500, fmt.Sprintf("Error encoding response to JSON: %s", err)
+	}
 
-    return 200, string(bytes)
+	return 200, string(bytes)
 }

@@ -24,15 +24,15 @@ func (r *Repo) StructureType(structure []byte) error {
 }
 
 func (r *Repo) ContentTypes() ([]string, error) {
-	types := make([]string,0)
+	types := make([]string, 0)
 	c := r.Db.C(structuresCollection)
 	it := c.Find(nil).Iter()
 	res := &backend.ContentType{}
-	
+
 	for it.Next(&res) {
 		types = append(types, res.Id)
 	}
-	
+
 	if err := it.Close(); err != nil {
 		return nil, err
 	}
