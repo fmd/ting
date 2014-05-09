@@ -12,7 +12,7 @@ func (r *Repo) PushType(structure []byte) *response.R {
 
 	c := r.Db.C(structuresCollection)
 	s := &backend.ContentType{}
-	
+
 	err = json.Unmarshal(structure, &s)
 	if err != nil {
 		return response.Error(err)

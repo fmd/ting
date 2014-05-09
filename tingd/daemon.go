@@ -1,34 +1,34 @@
 package main
 
 import (
-	"github.com/fmd/ting/backend/response"
-    "github.com/fmd/ting/backend/mongo"
-    "github.com/fmd/ting/backend"
-	"github.com/go-martini/martini"
 	"encoding/json"
-    "errors"
-    "fmt"
+	"errors"
+	"fmt"
+	"github.com/fmd/ting/backend"
+	"github.com/fmd/ting/backend/mongo"
+	"github.com/fmd/ting/backend/response"
+	"github.com/go-martini/martini"
 	"os"
 )
 
 func NewBackend(c backend.Credentials) (backend.Backend, error) {
-    var err error
-    var b backend.Backend
+	var err error
+	var b backend.Backend
 
-    switch c["dbback"] {
-    case "mongodb":
-        b, err = mongo.NewRepo(c)
-    case "couchdb":
-        return nil, errors.New("CouchDB currently unsupported.")
-    default:
-        return nil, errors.New(fmt.Sprintf("Invalid backend '%s'", c["dbback"]))
-    }
+	switch c["dbback"] {
+	case "mongodb":
+		b, err = mongo.NewRepo(c)
+	case "couchdb":
+		return nil, errors.New("CouchDB currently unsupported.")
+	default:
+		return nil, errors.New(fmt.Sprintf("Invalid backend '%s'", c["dbback"]))
+	}
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    return b, nil
+	return b, nil
 }
 
 type Daemon struct {
@@ -65,9 +65,9 @@ func (d *Daemon) Run() error {
 //JSONResponse is the response wrapper.
 //See more at http://labs.omniti.com/labs/jsend
 type JSONResponse struct {
-    Data    interface{} `json:"data"`    //Wrapper around any returned data.
-    Status  string 		`json:"status"`  // "success" | "fail" | "error"
-    Message string 		`json:"message"` // Error message.
+	Data    interface{} `json:"data"`    //Wrapper around any returned data.
+	Status  string      `json:"status"`  // "success" | "fail" | "error"
+	Message string      `json:"message"` // Error message.
 }
 
 //EncodeResponse encodes a JSON response to send back to the client.
@@ -85,19 +85,19 @@ func RenderToJson(r *response.R) (int, string) {
 		j.Data = r.Data
 	}
 
-    bytes, err := json.Marshal(j)
-    if err != nil {
-    	j.Data = nil
-    	j.Status = "error"
-    	j.Message = err.Error()
-    } else {
-    	return 200, string(bytes)
-    }
+	bytes, err := json.Marshal(j)
+	if err != nil {
+		j.Data = nil
+		j.Status = "error"
+		j.Message = err.Error()
+	} else {
+		return 200, string(bytes)
+	}
 
-    bytes, err = json.Marshal(j)
-    if err != nil {
-    	return 500, err.Error()
-    }
+	bytes, err = json.Marshal(j)
+	if err != nil {
+		return 500, err.Error()
+	}
 
-    return 200, string(bytes)
+	return 200, string(bytes)
 }
