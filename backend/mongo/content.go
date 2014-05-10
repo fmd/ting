@@ -1,17 +1,17 @@
 package mongo
 
 import (
-    "github.com/fmd/ting/backend"
-    "labix.org/v2/mgo/bson"
     "errors"
     "fmt"
+    "github.com/fmd/ting/backend"
+    "labix.org/v2/mgo/bson"
 )
 
 func (r *Repo) PushContent(contentType string, content *backend.Content) error {
     var err error
 
     c := r.Db.C(contentType)
-    
+
     if content.Id == nil {
         content.Id = bson.NewObjectId()
     }

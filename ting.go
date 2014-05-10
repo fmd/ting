@@ -5,8 +5,8 @@ import (
     "errors"
     "fmt"
     "github.com/fmd/ting/backend"
-    "github.com/fmd/ting/response"
     "github.com/fmd/ting/backend/mongo"
+    "github.com/fmd/ting/response"
 )
 
 type Ting struct {
@@ -118,7 +118,7 @@ func (t *Ting) ValidateContent(contentType string, id interface{}, content []byt
     }
 
     c := &backend.Content{}
-    
+
     c.Id = id
 
     err = json.Unmarshal(content, &c.Content)
@@ -197,7 +197,7 @@ func (t *Ting) Contents(contentType string, query interface{}) (int, response.JS
     contents, err := t.Backend.Contents(contentType, query)
     if err != nil {
         return response.Error(err).Wrap()
-    }    
+    }
 
     return response.Success(contents).Wrap()
 }
